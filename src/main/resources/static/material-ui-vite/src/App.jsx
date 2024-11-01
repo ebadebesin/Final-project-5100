@@ -10,12 +10,7 @@ import Today from './Today';
 export default function App() {
   return (
     <>
-      <TopBar/>
-      <Container sx={{
-        marginBottom:10
-      }}>
-        <Today/>
-      </Container>
+      <Today/>
       <Paper sx={{ position: 'fixed', bottom: 0, left: 0, right: 0 }} elevation={3}>
         <BottomNavBar/>
       </Paper>

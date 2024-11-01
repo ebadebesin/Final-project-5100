@@ -1,30 +1,81 @@
-import { Box, Button, Container, Stack } from '@mui/material';
 import * as React from 'react';
-import SendIcon from '@mui/icons-material/Send';
+import List from '@mui/material/List';
+import ListItem from '@mui/material/ListItem';
+import Divider from '@mui/material/Divider';
+import ListItemText from '@mui/material/ListItemText';
+import ListItemAvatar from '@mui/material/ListItemAvatar';
+import Avatar from '@mui/material/Avatar';
+import Typography from '@mui/material/Typography';
 
 export default function History() {
-        return  <>
-            <article>
-                <h1>MAGA activists emerge with a plan to undermine election results</h1>
-                <img src='https://media.cnn.com/api/v1/images/stellar/prod/thumb-20241031033549669.jpg?c=16x9&q=h_540,w_960,c_fill' width={"100%"}></img>
-                <p>CNN — Before Election Day has even arrived, the “Stop the Steal” movement has reemerged in force, with some of the same activists who tried to overturn former President Donald Trump’s 2020 loss outlining a step-by-step guide to undermine the results if he falls short again.</p>
-                <p>For months, those activists – who have been priming Trump supporters to believe the only way the former president can lose in 2024 is through fraud – have laid out proposals to thwart a potential Kamala Harris victory. Their plans include challenging results in court, pressuring</p>
-            </article>
-            <Stack 
-                direction="row" 
-                spacing={2}   
-                sx={{
-                    justifyContent: "center",
-                    alignItems: "center",
-                }}>
-                <Box>
-                </Box>
-                <Box>
-                    <Button variant="contained" endIcon={<SendIcon />}>
-                    Try Summarize
-                    </Button>
-                </Box>
-            </Stack>
-        </>
-            
-  }
+  return (  <>
+       <TopBar/>
+        <Container>
+        <List sx={{ width: '100%', maxWidth: 360, bgcolor: 'background.paper' }}>
+        <ListItem alignItems="flex-start">
+            <ListItemAvatar>
+            <Avatar alt="Remy Sharp" src="/static/images/avatar/1.jpg" />
+            </ListItemAvatar>
+            <ListItemText
+            primary="Brunch this weekend?"
+            secondary={
+                <React.Fragment>
+                <Typography
+                    component="span"
+                    variant="body2"
+                    sx={{ color: 'text.primary', display: 'inline' }}
+                >
+                    Ali Connors
+                </Typography>
+                {" — I'll be in your neighborhood doing errands this…"}
+                </React.Fragment>
+            }
+            />
+        </ListItem>
+        <Divider variant="inset" component="li" />
+        <ListItem alignItems="flex-start">
+            <ListItemAvatar>
+            <Avatar alt="Travis Howard" src="/static/images/avatar/2.jpg" />
+            </ListItemAvatar>
+            <ListItemText
+            primary="Summer BBQ"
+            secondary={
+                <React.Fragment>
+                <Typography
+                    component="span"
+                    variant="body2"
+                    sx={{ color: 'text.primary', display: 'inline' }}
+                >
+                    to Scott, Alex, Jennifer
+                </Typography>
+                {" — Wish I could come, but I'm out of town this…"}
+                </React.Fragment>
+            }
+            />
+        </ListItem>
+        <Divider variant="inset" component="li" />
+        <ListItem alignItems="flex-start">
+            <ListItemAvatar>
+            <Avatar alt="Cindy Baker" src="/static/images/avatar/3.jpg" />
+            </ListItemAvatar>
+            <ListItemText
+            primary="Oui Oui"
+            secondary={
+                <React.Fragment>
+                <Typography
+                    component="span"
+                    variant="body2"
+                    sx={{ color: 'text.primary', display: 'inline' }}
+                >
+                    Sandra Adams
+                </Typography>
+                {' — Do you have Paris recommendations? Have you ever…'}
+                </React.Fragment>
+            }
+            />
+        </ListItem>
+        </List>
+        </Container>
+    </>
+  );
+}

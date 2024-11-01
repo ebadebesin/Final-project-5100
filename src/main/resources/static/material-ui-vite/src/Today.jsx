@@ -1,11 +1,18 @@
-import { Box, Button, Container, Stack } from '@mui/material';
+import { Box, Button,Chip, Container, Stack } from '@mui/material';
 import * as React from 'react';
 import SendIcon from '@mui/icons-material/Send';
+import WhatshotIcon from '@mui/icons-material/Whatshot';
+import StarIcon from '@mui/icons-material/Star';
 import TopBar from './TopBar';
 
 export default function Today() {
         return  <>
-            <TopBar/>
+            <TopBar title="Today">
+              <Stack direction="row" spacing={1}>
+                <Chip icon={<WhatshotIcon />} label="152" color="primary" size="small" />
+                <Chip icon={<StarIcon />} label="226" color="success" size="small" />
+              </Stack>
+            </TopBar>
             <Container>
                 <article>
                     <h1>MAGA activists emerge with a plan to undermine election results</h1>

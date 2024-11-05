@@ -6,7 +6,7 @@ import ListItemText from '@mui/material/ListItemText';
 import ListItemAvatar from '@mui/material/ListItemAvatar';
 import Avatar from '@mui/material/Avatar';
 import Typography from '@mui/material/Typography';
-import TopBar from './TopBar'
+import TopBar from './Components/TopBar'
 import { Container,Rating } from '@mui/material';
 
 function HistoryItem({cover,title,date,rate}){

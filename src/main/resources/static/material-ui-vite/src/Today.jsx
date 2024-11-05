@@ -3,7 +3,7 @@ import * as React from 'react';
 import SendIcon from '@mui/icons-material/Send';
 import WhatshotIcon from '@mui/icons-material/Whatshot';
 import StarIcon from '@mui/icons-material/Star';
-import TopBar from './TopBar';
+import TopBar from './Components/TopBar'
 
 export default function Today() {
         return  <>

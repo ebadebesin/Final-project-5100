@@ -1,26 +1,49 @@
-import * as React from 'react';
-import BottomNavigation from '@mui/material/BottomNavigation';
-import BottomNavigationAction from '@mui/material/BottomNavigationAction';
+import * as React from "react";
+import BottomNavigation from "@mui/material/BottomNavigation";
+import BottomNavigationAction from "@mui/material/BottomNavigationAction";
 
-import HomeIcon from '@mui/icons-material/Home';
-import HistoryIcon from '@mui/icons-material/History';
-import PersonIcon from '@mui/icons-material/Person';
+import HomeIcon from "@mui/icons-material/Home";
+import HistoryIcon from "@mui/icons-material/History";
+import PersonIcon from "@mui/icons-material/Person";
+import { useLocation, useNavigate, Link } from "react-router-dom";
 
+export default function BottomNavBar({ currentPath }) {
+    currentPath = currentPath.replace(/^\//, "");
+    console.log("currentPath:", currentPath);
+    const map = {
+        today: 0,
+        history: 1,
+        profile: 2,
+    };
 
-export default function BottomNavBar() {
-    const [value, setValue] = React.useState(0);
-  
+    if (!currentPath) {
+        currentPath = "today";
+    }
+    currentPath = currentPath.toLowerCase();
+
+    const [value, setValue] = React.useState(map[currentPath] || 0);
+
     return (
         <BottomNavigation
-          showLabels
-          value={value}
-          onChange={(event, newValue) => {
-            setValue(newValue);
-          }}
+            showLabels
+            value={value}
+            onChange={(event, newValue) => {
+                setValue(newValue);
+            }}
         >
-          <BottomNavigationAction label="Today" icon={<HomeIcon />} />
-          <BottomNavigationAction label="History" icon={<HistoryIcon />} />
-          <BottomNavigationAction label="Profile" icon={<PersonIcon />} />
+            <BottomNavigationAction
+                component={Link}
+                to="/today"
+                label="Today"
+                icon={<HomeIcon />}
+            />
+            <BottomNavigationAction
+                component={Link}
+                to="/history"
+                label="History"
+                icon={<HistoryIcon />}
+            />
+            <BottomNavigationAction label="Profile" icon={<PersonIcon />} />
         </BottomNavigation>
     );
-  }
+}

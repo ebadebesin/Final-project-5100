@@ -5,6 +5,7 @@ target/
 !**/src/test/**/target/
 
 serviceAccount.json
+.env
 
 ### STS ###
 .apt_generated

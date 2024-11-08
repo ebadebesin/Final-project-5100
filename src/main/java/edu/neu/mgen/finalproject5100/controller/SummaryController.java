@@ -1,47 +1,89 @@
 package edu.neu.mgen.finalproject5100.controller;
 
-import edu.neu.mgen.finalproject5100.model.Summary;
-import edu.neu.mgen.finalproject5100.repository.SummaryRepository;
-import edu.neu.mgen.finalproject5100.service.OpenAIService;
+// import edu.neu.mgen.finalproject5100.model.Summary;
+// import edu.neu.mgen.finalproject5100.repository.SummaryRepository;
+// import edu.neu.mgen.finalproject5100.service.OpenAIService;
 
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.*;
-import java.time.LocalDateTime;
-import java.util.Map;
+// import java.util.UUID;
+// import org.springframework.beans.factory.annotation.Autowired;
+// import org.springframework.http.ResponseEntity;
+// import org.springframework.web.bind.annotation.*;
+// import java.time.LocalDateTime;
+// import java.util.Map;
 
-@RestController
-@RequestMapping("/api/summaries")
-@CrossOrigin(origins = "http://localhost:8080")
-public class SummaryController {
-    @Autowired
-    private SummaryRepository summaryRepository;
+// @RestController
+// @RequestMapping("/api/summaries")
+// public class SummaryController {
+
+//     private final OpenAIService openAIService;
+//     private final SummaryRepository summaryRepository;
+
+//     public SummaryController(OpenAIService openAIService, SummaryRepository summaryRepository) {
+//         this.openAIService = openAIService;
+//         this.summaryRepository = summaryRepository;
+//     }
+
+//     @PostMapping("/evaluate")
+//     public Summary evaluateSummary(@RequestBody Summary summary) {
+//         String feedback = openAIService.evaluateSummary(summary.getUserSummary(), summary.getOriginalText());
+        
+//         // Assume feedback format includes "score: X" as a part of the response.
+//         summary.setFeedback(feedback);
+//         summary.setScore(parseScore(feedback));  // Extract score as needed.
+
+//         summary.setId(UUID.randomUUID().toString());
+//         summaryRepository.save(summary);
+
+//         return summary;
+//     }
+
+//     private int parseScore(String feedback) {
+//         // Extract score based on OpenAI feedback response format
+//         // Example: extract numeric value from "score: X"
+//         // Customize as per actual feedback format from OpenAI.
+//         return Integer.parseInt(feedback.replaceAll("[^0-9]", ""));
+//     }
+// }
+
+
+
+
+
+
+
+
+// @RestController
+// @RequestMapping("/api/summaries")
+// // @CrossOrigin(origins = "http://localhost:8080")
+// public class SummaryController {
+//     @Autowired
+//     private SummaryRepository summaryRepository;
     
-    @Autowired
-    private OpenAIService openAIService;
+//     @Autowired
+//     private OpenAIService openAIService;
 
-    @PostMapping("/evaluate")
-    public ResponseEntity<?> evaluateSummary(@RequestBody Map<String, String> request) {
-        String originalText = request.get("originalText");
-        String userSummary = request.get("userSummary");
-        Long articleId = Long.parseLong(request.get("articleId"));
+//     @PostMapping("/evaluate")
+//     public ResponseEntity<?> evaluateSummary(@RequestBody Map<String, String> request) {
+//         String originalText = request.get("originalText");
+//         String userSummary = request.get("userSummary");
+//         Long articleId = Long.parseLong(request.get("articleId"));
 
-        Map<String, Object> evaluation = openAIService.evaluateSummary(originalText, userSummary);
+//         Map<String, Object> evaluation = openAIService.evaluateSummary(originalText, userSummary);
         
-        Summary summary = new Summary();
-        summary.setArticleId(articleId);
-        summary.setUserSummary(userSummary);
-        summary.setScore((Integer) evaluation.get("score"));
-        summary.setFeedback((String) evaluation.get("feedback"));
-        summary.setSubmissionDate(LocalDateTime.now());
+//         Summary summary = new Summary();
+//         summary.setArticleId(articleId);
+//         summary.setUserSummary(userSummary);
+//         summary.setScore((Integer) evaluation.get("score"));
+//         summary.setFeedback((String) evaluation.get("feedback"));
+//         summary.setSubmissionDate(LocalDateTime.now());
         
-        summaryRepository.save(summary);
+//         summaryRepository.save(summary);
         
-        return ResponseEntity.ok(evaluation);
-    }
+//         return ResponseEntity.ok(evaluation);
+//     }
 
-    @GetMapping("/best/{articleId}")
-    public ResponseEntity<?> getBestScore(@PathVariable Long articleId) {
-        return ResponseEntity.ok(summaryRepository.findBestScoreByArticleId(articleId));
-    }
-}
+//     @GetMapping("/best/{articleId}")
+//     public ResponseEntity<?> getBestScore(@PathVariable Long articleId) {
+//         return ResponseEntity.ok(summaryRepository.findBestScoreByArticleId(articleId));
+//     }
+// }

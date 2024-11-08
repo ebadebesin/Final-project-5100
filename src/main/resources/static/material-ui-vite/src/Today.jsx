@@ -4,6 +4,7 @@ import SendIcon from '@mui/icons-material/Send';
 import WhatshotIcon from '@mui/icons-material/Whatshot';
 import StarIcon from '@mui/icons-material/Star';
 import TopBar from './Components/TopBar'
+import { Link } from "react-router-dom";
 
 export default function Today() {
         return  <>
@@ -30,7 +31,7 @@ export default function Today() {
                     <Box>
                     </Box>
                     <Box>
-                        <Button variant="contained" endIcon={<SendIcon />}>
+                        <Button variant="contained" component={Link} to="/summary" endIcon={<SendIcon />}>
                         Try Summarize
                         </Button>
                     </Box>

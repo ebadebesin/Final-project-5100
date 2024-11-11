@@ -1,10 +1,13 @@
 package edu.neu.mgen.finalproject5100.repository;
 
+import edu.neu.mgen.finalproject5100.model.Summary;
+import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Query;
+import java.util.Optional;
 
 import com.google.api.core.ApiFuture;
 import com.google.cloud.firestore.*;
 import com.google.firebase.cloud.FirestoreClient;
-import edu.neu.mgen.finalproject5100.model.Summary;
 import org.springframework.stereotype.Repository;
 
 import java.util.ArrayList;
@@ -45,7 +48,7 @@ public class SummaryRepository {
                 .collection(COLLECTION_NAME)
                 .whereEqualTo("articleId", articleId)
                 .whereEqualTo("userId", userId)
-                .orderBy("score", Query.Direction.DESCENDING)
+                // .orderBy("score", Query.Direction.DESCENDING)
                 .limit(1)
                 .get();
 
@@ -67,7 +70,7 @@ public class SummaryRepository {
                 .collection(COLLECTION_NAME)
                 .whereEqualTo("articleId", articleId)
                 .whereEqualTo("userId", userId)
-                .orderBy("submissionDate", Query.Direction.DESCENDING)
+                // .orderBy("submissionDate", Query.Direction.DESCENDING)
                 .get();
 
             List<Summary> summaries = new ArrayList<>();

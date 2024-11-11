@@ -11,8 +11,8 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.slf4j.Logger;
 
-import java.time.LocalDateTime;
-import java.util.List;
+// import java.time.LocalDateTime;
+// import java.util.List;
 
 @RestController
 @RequestMapping("/api/summaries")
@@ -69,7 +69,6 @@ public class SummaryController {
 // import edu.neu.mgen.finalproject5100.repository.SummaryRepository;
 // import edu.neu.mgen.finalproject5100.service.OpenAIService;
 
-// import java.util.UUID;
 // import org.springframework.beans.factory.annotation.Autowired;
 // import org.springframework.http.ResponseEntity;
 // import org.springframework.web.bind.annotation.*;
@@ -78,48 +77,7 @@ public class SummaryController {
 
 // @RestController
 // @RequestMapping("/api/summaries")
-// public class SummaryController {
-
-//     private final OpenAIService openAIService;
-//     private final SummaryRepository summaryRepository;
-
-//     public SummaryController(OpenAIService openAIService, SummaryRepository summaryRepository) {
-//         this.openAIService = openAIService;
-//         this.summaryRepository = summaryRepository;
-//     }
-
-//     @PostMapping("/evaluate")
-//     public Summary evaluateSummary(@RequestBody Summary summary) {
-//         String feedback = openAIService.evaluateSummary(summary.getUserSummary(), summary.getOriginalText());
-        
-//         // Assume feedback format includes "score: X" as a part of the response.
-//         summary.setFeedback(feedback);
-//         summary.setScore(parseScore(feedback));  // Extract score as needed.
-
-//         summary.setId(UUID.randomUUID().toString());
-//         summaryRepository.save(summary);
-
-//         return summary;
-//     }
-
-//     private int parseScore(String feedback) {
-//         // Extract score based on OpenAI feedback response format
-//         // Example: extract numeric value from "score: X"
-//         // Customize as per actual feedback format from OpenAI.
-//         return Integer.parseInt(feedback.replaceAll("[^0-9]", ""));
-//     }
-// }
-
-
-
-
-
-
-
-
-// @RestController
-// @RequestMapping("/api/summaries")
-// // @CrossOrigin(origins = "http://localhost:8080")
+// @CrossOrigin(origins = "http://localhost:8080")
 // public class SummaryController {
 //     @Autowired
 //     private SummaryRepository summaryRepository;

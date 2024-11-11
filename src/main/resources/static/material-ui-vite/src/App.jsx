@@ -4,7 +4,6 @@ import { Container, Paper } from "@mui/material";
 
 import ArticleHistory from "./ArticleHistory";
 import Today from "./Today";
-import SummaryPractice from "./summary";
 import { BrowserRouter, Routes, Route, useLocation } from "react-router-dom";
 
 export default function App() {
@@ -18,7 +17,6 @@ export default function App() {
                     <Route path="today" element={<Today />} />
                     <Route path="history" element={<ArticleHistory />} />
                     <Route path="profile" element={<> </>} />
-                    <Route path="summary" element={<SummaryPractice />} />
                     <Route path="*" element={<></>} />
                 </Route>
             </Routes>

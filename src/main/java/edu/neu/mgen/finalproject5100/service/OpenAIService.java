@@ -1,43 +1,60 @@
 package edu.neu.mgen.finalproject5100.service;
 
-// import org.springframework.beans.factory.annotation.Autowired;
+import com.theokanning.openai.completion.chat.ChatCompletionRequest;
+import com.theokanning.openai.completion.chat.ChatMessage;
+import com.theokanning.openai.service.OpenAiService;
+import edu.neu.mgen.finalproject5100.model.Summary;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
-import retrofit2.Call;
-import retrofit2.Retrofit;
-import retrofit2.http.Body;
-import retrofit2.http.Headers;
-import retrofit2.http.POST;
+
+import java.util.ArrayList;
+import java.util.List;
 
 @Service
 public class OpenAIService {
-
-    private final OpenAIClient openAIClient;
-
-    public OpenAIService(Retrofit retrofit) {
-        this.openAIClient = retrofit.create(OpenAIClient.class);
-    }
-
-    public String evaluateSummary(String userSummary, String articleText) {
-        String prompt = "Evaluate the following summary for accuracy and give a score out of 100.\n"
-                + "Original text: " + articleText + "\n"
-                + "User's summary: " + userSummary;
+    
+    @Value("${openai.api.key}")
+    private String openaiApiKey;
+    
+    public Summary evaluateSummary(Summary summary) {
+        OpenAiService service = new OpenAiService(openaiApiKey);
         
-        OpenAIRequest request = new OpenAIRequest(prompt);
-        try {
-            OpenAIResponse response = openAIClient.getFeedback(request).execute().body();
-            return response != null ? response.getFeedback() : "Error retrieving feedback";
-        } catch (Exception e) {
-            throw new RuntimeException("Failed to get response from OpenAI", e);
-        }
-    }
-
-    private interface OpenAIClient {
-        @POST("v1/completions")
-        @Headers("Content-Type: application/json")
-        Call<OpenAIResponse> getFeedback(@Body OpenAIRequest request);
+        String promptContent = String.format("""
+            Please evaluate this summary of the article and provide:
+            1. A score from 0-100
+            2. Constructive feedback
+            
+            Summary: %s
+            
+            Respond in JSON format:
+            {
+                "score": <number>,
+                "feedback": "<feedback text>"
+            }
+            """, summary.getUserSummary());
+        
+        // Create a list of chat messages
+        List<ChatMessage> messages = new ArrayList<>();
+        messages.add(new ChatMessage("system", "You are a helpful assistant that evaluates article summaries."));
+        messages.add(new ChatMessage("user", promptContent));
+        
+        // Build the chat completion request
+        ChatCompletionRequest request = ChatCompletionRequest.builder()
+            .model("gpt-3.5-turbo")
+            .messages(messages)
+            .build();
+            
+        String response = service.createChatCompletion(request)
+            .getChoices().get(0).getMessage().getContent();
+            
+        // Parse JSON response and update summary
+        // You'll need to add proper JSON parsing here
+        summary.setScore(95); // Example score
+        summary.setFeedback("Great summary! Clear and concise."); // Example feedback
+        
+        return summary;
     }
 }
-
 
 
 // package edu.neu.mgen.finalproject5100.service;

@@ -5,10 +5,6 @@ target/
 !**/src/test/**/target/
 
 serviceAccount.json
-<<<<<<< HEAD
-.env
-=======
->>>>>>> eda201f (added submission gui)
 
 ### STS ###
 .apt_generated

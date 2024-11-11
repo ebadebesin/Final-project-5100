@@ -1,5 +1,70 @@
 package edu.neu.mgen.finalproject5100.controller;
 
+import edu.neu.mgen.finalproject5100.model.ErrorResponse;
+import edu.neu.mgen.finalproject5100.model.Summary;
+import edu.neu.mgen.finalproject5100.service.OpenAIService;
+// import edu.neu.mgen.finalproject5100.repository.SummaryRepository;
+
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.*;
+import org.slf4j.Logger;
+
+import java.time.LocalDateTime;
+import java.util.List;
+
+@RestController
+@RequestMapping("/api/summaries")
+@CrossOrigin(origins = "http://localhost:5173")
+public class SummaryController {
+    
+    private static final Logger logger = LoggerFactory.getLogger(SummaryController.class);
+    
+    @Autowired
+    private OpenAIService openAIService;
+    
+    // @Autowired
+    // private SummaryRepository summaryRepository;
+    
+    @PostMapping("/evaluate")
+    public ResponseEntity<?> evaluateSummary(@RequestBody Summary summary) {
+        try {
+            logger.info("Received summary for evaluation: {}", summary);
+            Summary evaluatedSummary = openAIService.evaluateSummary(summary);
+            return ResponseEntity.ok(evaluatedSummary);
+        } catch (Exception e) {
+            logger.error("Error evaluating summary: ", e);
+            return ResponseEntity.internalServerError()
+                .body(new ErrorResponse("Error evaluating summary: " + e.getMessage()));
+        }
+    }
+    
+    // @GetMapping("/best/{articleId}/{userId}")
+    // public ResponseEntity<Summary> getBestScore(
+    //         @PathVariable String articleId,
+    //         @PathVariable String userId) {
+    //     Summary bestSummary = summaryRepository.findBestScoreByArticleId(articleId, userId);
+    //     return ResponseEntity.ok(bestSummary);
+    // }
+    
+    // @GetMapping("/history/{articleId}/{userId}")
+    // public ResponseEntity<List<Summary>> getSummaryHistory(
+    //         @PathVariable String articleId,
+    //         @PathVariable String userId) {
+    //     List<Summary> summaries = summaryRepository.findAllByArticleId(articleId, userId);
+    //     return ResponseEntity.ok(summaries);
+    // }
+}
+
+
+
+
+
+
+
+
+
 // import edu.neu.mgen.finalproject5100.model.Summary;
 // import edu.neu.mgen.finalproject5100.repository.SummaryRepository;
 // import edu.neu.mgen.finalproject5100.service.OpenAIService;

@@ -5,6 +5,7 @@ target/
 !**/src/test/**/target/
 
 serviceAccount.json
+application-test.properties
 
 ### STS ###
 .apt_generated

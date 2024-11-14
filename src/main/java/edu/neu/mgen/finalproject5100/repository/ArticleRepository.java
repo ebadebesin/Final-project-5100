@@ -1,18 +1,12 @@
 package edu.neu.mgen.finalproject5100.repository;
-
+import java.util.*;
 import edu.neu.mgen.finalproject5100.model.Article;
-import org.springframework.data.jpa.repository.JpaRepository;
-import org.springframework.data.jpa.repository.Query;
-
-import java.util.Optional;
-
+import edu.neu.mgen.finalproject5100.util.DateUtil;
 import com.google.api.core.ApiFuture;
 import com.google.cloud.firestore.*;
 import com.google.firebase.cloud.FirestoreClient;
 import org.springframework.stereotype.Repository;
 
-import java.util.ArrayList;
-import java.util.List;
 import java.util.concurrent.ExecutionException;
 
 @Repository
@@ -20,6 +14,9 @@ public class ArticleRepository {
     private static final String COLLECTION_NAME = "articles";
 
     public Article save(Article article) {
+        if (article == null) {
+            return null;
+        }
         try {
             Firestore firestore = FirestoreClient.getFirestore();
 
@@ -28,10 +25,7 @@ public class ArticleRepository {
                 article.setId(firestore.collection(COLLECTION_NAME).document().getId());
             }
 
-            ApiFuture<WriteResult> future = firestore
-                    .collection(COLLECTION_NAME)
-                    .document(article.getId())
-                    .set(article);
+            ApiFuture<WriteResult> future = firestore.collection(COLLECTION_NAME).document(article.getId()).set(article);
 
             future.get(); // Wait for the operation to complete
             return article;
@@ -41,15 +35,13 @@ public class ArticleRepository {
     }
 
     public Article findById(String id) {
+        if (id == null) {
+            return null;
+        }
+
         try {
             Firestore firestore = FirestoreClient.getFirestore();
-
-            // Query for summaries with the given articleId and userId, ordered by score
-            ApiFuture<QuerySnapshot> future = firestore
-                    .collection(COLLECTION_NAME)
-                    .whereEqualTo("id", id)
-                    .limit(1)
-                    .get();
+            ApiFuture<QuerySnapshot> future = firestore.collection(COLLECTION_NAME).whereEqualTo("id", id).limit(1).get();
 
             List<QueryDocumentSnapshot> documents = future.get().getDocuments();
             if (!documents.isEmpty()) {
@@ -57,31 +49,71 @@ public class ArticleRepository {
             }
             return null;
         } catch (InterruptedException | ExecutionException e) {
-            throw new RuntimeException("Error finding best score", e);
+            throw new RuntimeException("Error saving article", e);
         }
     }
-/*
-    public List<Summary> findAllByArticleId(String articleId, String userId) {
+
+    public ArrayList<Article> findByIds(ArrayList<String> ids) {
+        if (ids == null || ids.isEmpty()) {
+            return null;
+        }
+        if (ids.size() > 100) {
+            throw new RuntimeException("findByIds only accept 100 ids");
+        }
+
+        try {
+            Firestore firestore = FirestoreClient.getFirestore();
+            ApiFuture<QuerySnapshot> future = firestore.collection(COLLECTION_NAME).whereIn("id", ids).limit(100).get();
+            List<QueryDocumentSnapshot> documents = future.get().getDocuments();
+
+            ArrayList<Article> articles = new ArrayList<>();
+            if (documents.isEmpty()) {
+                return null;
+            }
+            for (QueryDocumentSnapshot document : documents) {
+                articles.add(document.toObject(Article.class));
+            }
+            return articles;
+        } catch (InterruptedException | ExecutionException e) {
+            throw new RuntimeException("Error finding articles", e);
+        }
+    }
+
+    public Article findByDate(Date date) {
+        if (date == null) {
+            return null;
+        }
+
+        Date dateStart = DateUtil.getStartOfDate(date);
         try {
             Firestore firestore = FirestoreClient.getFirestore();
 
-            ApiFuture<QuerySnapshot> future = firestore
-                    .collection(COLLECTION_NAME)
-                    .whereEqualTo("articleId", articleId)
-                    .whereEqualTo("userId", userId)
-                    // .orderBy("submissionDate", Query.Direction.DESCENDING)
-                    .get();
+            ApiFuture<QuerySnapshot> future = firestore.collection(COLLECTION_NAME).whereEqualTo("date", dateStart).limit(1).get();
 
-            List<Summary> summaries = new ArrayList<>();
             List<QueryDocumentSnapshot> documents = future.get().getDocuments();
-            for (QueryDocumentSnapshot document : documents) {
-                summaries.add(document.toObject(Summary.class));
+            if (!documents.isEmpty()) {
+                return documents.getFirst().toObject(Article.class);
             }
-            return summaries;
+            return null;
         } catch (InterruptedException | ExecutionException e) {
-            throw new RuntimeException("Error finding summaries", e);
+            throw new RuntimeException("Error finding article", e);
+        }
+
+    }
+
+    public Article findLatest() {
+        try {
+            Firestore firestore = FirestoreClient.getFirestore();
+            ApiFuture<QuerySnapshot> future = firestore.collection(COLLECTION_NAME).orderBy("date").limit(1).get();
+
+            List<QueryDocumentSnapshot> documents = future.get().getDocuments();
+            if (!documents.isEmpty()) {
+                return documents.getFirst().toObject(Article.class);
+            }
+            return null;
+        } catch (InterruptedException | ExecutionException e) {
+            throw new RuntimeException("Error finding article", e);
         }
     }
- */
 
 }

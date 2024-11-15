@@ -1,13 +1,20 @@
 import ApiClient from "../Services/ApiClient";
 import { useQuery } from "@tanstack/react-query";
 
-const articleApi = new ApiClient("/articles/latest");
+const articleApi = new ApiClient("/articles");
 
 export const useArticles = () => {
-    const getLatest = useQuery({
-        queryKey: ["articles", "latest"],
-        queryFn: articleApi.getFn,
-    });
+    const getLatest = () =>
+        useQuery({
+            queryKey: ["articles", "latest"],
+            queryFn: articleApi.queryFn({ path: "/latest" }),
+        });
 
-    return { getLatest };
+    const getById = (id) =>
+        useQuery({
+            queryKey: ["article", id],
+            queryFn: articleApi.queryFn({ path: "/id/" + id }),
+        });
+
+    return { getLatest, getById };
 };

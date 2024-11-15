@@ -1,7 +1,9 @@
 package edu.neu.mgen.finalproject5100.controller;
 
+import edu.neu.mgen.finalproject5100.model.Article;
 import edu.neu.mgen.finalproject5100.model.ErrorResponse;
 import edu.neu.mgen.finalproject5100.model.Summary;
+import edu.neu.mgen.finalproject5100.repository.SummaryRepository;
 import edu.neu.mgen.finalproject5100.service.OpenAIService;
 // import edu.neu.mgen.finalproject5100.repository.SummaryRepository;
 
@@ -24,8 +26,8 @@ public class SummaryController {
     @Autowired
     private OpenAIService openAIService;
     
-    // @Autowired
-    // private SummaryRepository summaryRepository;
+     @Autowired
+     private SummaryRepository summaryRepository;
     
     @PostMapping("/evaluate")
     public ResponseEntity<?> evaluateSummary(@RequestBody Summary summary) {
@@ -39,22 +41,18 @@ public class SummaryController {
                 .body(new ErrorResponse("Error evaluating summary: " + e.getMessage()));
         }
     }
-    
-    // @GetMapping("/best/{articleId}/{userId}")
-    // public ResponseEntity<Summary> getBestScore(
-    //         @PathVariable String articleId,
-    //         @PathVariable String userId) {
-    //     Summary bestSummary = summaryRepository.findBestScoreByArticleId(articleId, userId);
-    //     return ResponseEntity.ok(bestSummary);
-    // }
-    
-    // @GetMapping("/history/{articleId}/{userId}")
-    // public ResponseEntity<List<Summary>> getSummaryHistory(
-    //         @PathVariable String articleId,
-    //         @PathVariable String userId) {
-    //     List<Summary> summaries = summaryRepository.findAllByArticleId(articleId, userId);
-    //     return ResponseEntity.ok(summaries);
-    // }
+    @GetMapping("/test")
+    public ResponseEntity<?> test() {
+        Summary summary = new Summary();
+        summary.setArticleId("fdjalkfdla");
+        summary.setOriginalText("fdjalkfdla");
+        summary.setUserSummary("fdjalkfdla");
+        summary.setFeedback("fdjalkfdla");
+        summary.setScore(111);
+        Summary sumRet = summaryRepository.save(summary);
+        return ResponseEntity.ok(sumRet);
+    }
+
 }
 
 

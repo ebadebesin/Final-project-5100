@@ -1,6 +1,7 @@
 package edu.neu.mgen.finalproject5100.model;
 
 import java.time.LocalDateTime;
+import java.util.Date;
 // import com.google.cloud.gcp.data.firestore.Document;
 import lombok.Data;
 import org.springframework.data.annotation.Id;
@@ -15,7 +16,7 @@ public class Summary {
     private String userSummary;
     private String feedback;
     private int score;
-    private LocalDateTime submissionDate = LocalDateTime.now();
+    private Date submissionDate = new Date();
 
     // Getters and setters
     public String getId() { return id; }
@@ -32,9 +33,6 @@ public class Summary {
     
     public String getFeedback() { return feedback; }
     public void setFeedback(String feedback) { this.feedback = feedback; }
-    
-    public LocalDateTime getSubmissionDate() { return submissionDate; }
-    public void setSubmissionDate(LocalDateTime submissionDate) { this.submissionDate = submissionDate; }
 
 }
 

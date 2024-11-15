@@ -5,11 +5,21 @@ import WhatshotIcon from "@mui/icons-material/Whatshot";
 import StarIcon from "@mui/icons-material/Star";
 import TopBar from "./Components/TopBar";
 import { useArticles } from "./Hooks/UseArticles";
+import { Link } from "react-router-dom";
 
 export default function Today() {
     const { getLatest } = useArticles();
-    const { isPending, error, data, isFetching } = getLatest;
+    const { isPending, error, data, isFetching } = getLatest();
+
+    /*
+    const { getById } = useArticles();
+
+    const { isPending, error, data, isFetching } = getById(
+       "jpbc5sqcbq776xopaVyv"
+    );
+    */
     let article = {
+        id: "",
         title: "",
         poster: "",
         content: "",
@@ -17,7 +27,7 @@ export default function Today() {
     if (data) {
         article = data;
     }
-    if (isPending) {
+    if (isPending || isFetching) {
         article.title = "loading...";
     }
     if (error) {
@@ -57,7 +67,12 @@ export default function Today() {
                 >
                     <Box></Box>
                     <Box>
-                        <Button variant="contained" endIcon={<SendIcon />}>
+                        <Button
+                            variant="contained"
+                            component={Link}
+                            to={"/summary" + (article?.id || "")}
+                            endIcon={<SendIcon />}
+                        >
                             Try Summarize
                         </Button>
                     </Box>

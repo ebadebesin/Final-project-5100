@@ -1,51 +1,94 @@
 package edu.neu.mgen.finalproject5100.service;
-import com.jzhangdeveloper.newsapi.models.TopHeadlines;
-import com.jzhangdeveloper.newsapi.net.NewsAPI;
-import com.jzhangdeveloper.newsapi.net.NewsAPIClient;
-import com.jzhangdeveloper.newsapi.net.NewsAPIResponse;
-import com.jzhangdeveloper.newsapi.params.TopHeadlinesParams;
+
+import com.fasterxml.jackson.annotation.JsonProperty;
 import edu.neu.mgen.finalproject5100.model.Article;
-import edu.neu.mgen.finalproject5100.util.DateUtil;
+import lombok.Data;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
-
+import org.springframework.web.client.RestTemplate;
+import org.springframework.web.util.UriComponentsBuilder;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 import java.util.Date;
-import java.util.Map;
+import java.util.List;
+
+/*
+    //@Scheduled(cron = "sec min hour dayOfMonth month dayOfWeek(0-7)", zone = "Europe/Paris")
+    @Scheduled(cron = "0 0 6-12 * * ?")
+    public void scheduleNewsUpdateTask(){
+        //
+    }
+*/
 
 @Service
 public class NewsService {
-    @Value("${newsapi.key}")
-    private String newsApiKey;
+//    @Value("${newsapi.key}")
+//    private String newsApiKey;
 
-    /*
-        //@Scheduled(cron = "sec min hour dayOfMonth month dayOfWeek(0-7)", zone = "Europe/Paris")
-        @Scheduled(cron = "0 0 6-12 * * ?")
-        public void scheduleNewsUpdateTask(){
-            //
-        }
-    */
+    private final String apiUrl = "http://www.terryye.com/news/newsApi.php";
 
+    private final RestTemplate restTemplate;
+
+
+    @Data
+    private static class News {
+        private String title;
+        private String content;
+        private String image_url;
+        private String pubDate;
+        private String pubDateTZ;
+
+    }
+
+    @Data
+    private static class NewsResponse {
+        @JsonProperty("results")
+        private List<News> news;
+
+        @JsonProperty("status")
+        private String status;
+
+        @JsonProperty("totalResults")
+        private int totalResults;
+    }
+
+    public NewsService(RestTemplate restTemplate) {
+        this.restTemplate = restTemplate;
+    }
 
     public Article getLatest() {
-        NewsAPIClient client = NewsAPI.newClientBuilder().setApiKey(newsApiKey).build();
-        Map<String, String> topHeadlineParams = TopHeadlinesParams.newBuilder().setCountry("us").setPageSize(1).build();
-        Article article;
+        String url = UriComponentsBuilder.fromHttpUrl(apiUrl)
+//                .queryParam("apikey", newsApiKey)
+                .queryParam("category", "politics")
+                .queryParam("language", "en")
+                .queryParam("country", "us")
+                .queryParam("image", "1")
+                .queryParam("size", "1")
+                .toUriString();
         try {
-            TopHeadlines headlines;
-            NewsAPIResponse response = client.getTopHeadlines(topHeadlineParams);
-            // get status code
-            response.getStatusCode();
-            com.jzhangdeveloper.newsapi.models.Article news;
-            // get response body as a Java object and Json object (use Gson)
-            headlines = response.getBody();
-            news = headlines.getArticles().getFirst();
-            article = new Article(null, DateUtil.getStartOfDate(new Date()), news.getTitle(), news.getContent(), news.getUrlToImage());
+            NewsResponse response = restTemplate.getForObject(url, NewsResponse.class);
+            String responseStr = restTemplate.getForObject(url, String.class);
+            System.out.println(responseStr);
+
+            if (response == null || response.totalResults == 0 || response.news.isEmpty()) {
+                return null;
+            }
+
+            News news = response.news.getFirst();
+            DateFormat df = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss Z");
+            Date date = df.parse(news.pubDate + " " + news.pubDateTZ);
+
+            return new Article(
+                    null,
+                    date,
+                    news.getTitle(),
+                    news.getContent(),
+                    news.getImage_url()
+            );
+
         } catch (Exception e) {
-            throw new RuntimeException(e);
+            throw new RuntimeException("Error saving article", e);
         }
-
-        return article;
-
     }
 
 }

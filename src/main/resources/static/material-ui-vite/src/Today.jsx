@@ -1,41 +1,68 @@
-import { Box, Button,Chip, Container, Stack } from '@mui/material';
-import * as React from 'react';
-import SendIcon from '@mui/icons-material/Send';
-import WhatshotIcon from '@mui/icons-material/Whatshot';
-import StarIcon from '@mui/icons-material/Star';
-import TopBar from './Components/TopBar'
+import { Box, Button, Chip, Container, Stack } from "@mui/material";
+import * as React from "react";
+import SendIcon from "@mui/icons-material/Send";
+import WhatshotIcon from "@mui/icons-material/Whatshot";
+import StarIcon from "@mui/icons-material/Star";
+import TopBar from "./Components/TopBar";
+import { useArticles } from "./Hooks/UseArticles";
 
 export default function Today() {
-        return  <>
+    const { getLatest } = useArticles();
+    const { isPending, error, data, isFetching } = getLatest;
+    let article = {
+        title: "",
+        poster: "",
+        content: "",
+    };
+    if (data) {
+        article = data;
+    }
+    if (isPending) {
+        article.title = "loading...";
+    }
+    if (error) {
+        article.title = error.message;
+    }
+    return (
+        <>
             <TopBar title="Today">
-              <Stack direction="row" spacing={1}>
-                <Chip icon={<WhatshotIcon />} label="152" color="primary" size="small" />
-                <Chip icon={<StarIcon />} label="226" color="success" size="small" />
-              </Stack>
+                <Stack direction="row" spacing={1}>
+                    <Chip
+                        icon={<WhatshotIcon />}
+                        label="152"
+                        color="primary"
+                        size="small"
+                    />
+                    <Chip
+                        icon={<StarIcon />}
+                        label="226"
+                        color="success"
+                        size="small"
+                    />
+                </Stack>
             </TopBar>
             <Container>
                 <article>
-                    <h1>MAGA activists emerge with a plan to undermine election results</h1>
-                    <img src='https://media.cnn.com/api/v1/images/stellar/prod/thumb-20241031033549669.jpg?c=16x9&q=h_540,w_960,c_fill' width={"100%"}></img>
-                    <p>CNN — Before Election Day has even arrived, the “Stop the Steal” movement has reemerged in force, with some of the same activists who tried to overturn former President Donald Trump’s 2020 loss outlining a step-by-step guide to undermine the results if he falls short again.</p>
-                    <p>For months, those activists – who have been priming Trump supporters to believe the only way the former president can lose in 2024 is through fraud – have laid out proposals to thwart a potential Kamala Harris victory. Their plans include challenging results in court, pressuring</p>
+                    <h1>{article?.title || ""}</h1>
+                    <img src={article?.poster || ""} width={"100%"}></img>
+                    <>{article?.content || ""}</>
                 </article>
-                <Stack 
-                    direction="row" 
-                    spacing={2}   
+                <Stack
+                    direction="row"
+                    spacing={2}
                     sx={{
                         justifyContent: "center",
                         alignItems: "center",
-                    }}>
-                    <Box>
-                    </Box>
+                    }}
+                >
+                    <Box></Box>
                     <Box>
                         <Button variant="contained" endIcon={<SendIcon />}>
-                        Try Summarize
+                            Try Summarize
                         </Button>
                     </Box>
                 </Stack>
             </Container>
         </>
-            
-  }
+    );
+}

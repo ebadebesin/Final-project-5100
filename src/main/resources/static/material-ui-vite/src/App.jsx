@@ -1,16 +1,21 @@
-import * as React from "react";
-import BottomNavBar from "./Components/BottomNavBar";
 import { Container, Paper } from "@mui/material";
+import * as React from "react";
+
+import { Route, Routes, useLocation } from "react-router-dom";
+
+import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 
 import ArticleHistory from "./ArticleHistory";
+import BottomNavBar from "./Components/BottomNavBar";
 import Today from "./Today";
-import { BrowserRouter, Routes, Route, useLocation } from "react-router-dom";
+
+const queryClient = new QueryClient();
 
 export default function App() {
     const location = useLocation();
 
     return (
-        <>
+        <QueryClientProvider client={queryClient}>
             <Routes>
                 <Route path="/">
                     <Route index element={<Today />} />
@@ -20,13 +25,13 @@ export default function App() {
                     <Route path="*" element={<></>} />
                 </Route>
             </Routes>
-            <Container sx={{ height: 60 }}></Container>
+            <Container sx={{ height: 80 }}></Container>
             <Paper
                 sx={{ position: "fixed", bottom: 0, left: 0, right: 0 }}
                 elevation={3}
             >
                 <BottomNavBar currentPath={location.pathname} />
             </Paper>
-        </>
+        </QueryClientProvider>
     );
 }

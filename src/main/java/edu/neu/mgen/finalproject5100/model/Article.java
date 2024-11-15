@@ -17,11 +17,11 @@ public class Article {
     public Article(){
     }
     public Article(String id, Date date,String title,String content, String poster) {
-        this.id = id;
-        this.date = date;
-        this.title = title;
-        this.content = content;
-        this.poster = poster;
+        this.setId(id);
+        this.setDate(date);
+        this.setTitle(title);
+        this.setContent(content);
+        this.setPoster(poster);
     }
 
 

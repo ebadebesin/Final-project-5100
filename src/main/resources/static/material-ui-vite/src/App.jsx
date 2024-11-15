@@ -5,6 +5,7 @@ import { Container, Paper } from "@mui/material";
 import ArticleHistory from "./ArticleHistory";
 import Today from "./Today";
 import { BrowserRouter, Routes, Route, useLocation } from "react-router-dom";
+import SummaryComponent from "./summary";
 
 export default function App() {
     const location = useLocation();
@@ -16,6 +17,7 @@ export default function App() {
                     <Route index element={<Today />} />
                     <Route path="today" element={<Today />} />
                     <Route path="history" element={<ArticleHistory />} />
+                    <Route path= "summary" element={<SummaryComponent />} />
                     <Route path="profile" element={<> </>} />
                     <Route path="*" element={<></>} />
                 </Route>

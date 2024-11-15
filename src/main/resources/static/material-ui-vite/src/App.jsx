@@ -7,6 +7,7 @@ import Today from "./Today";
 import { BrowserRouter, Routes, Route, useLocation } from "react-router-dom";
 import SummaryComponent from "./summary";
 
+
 export default function App() {
     const location = useLocation();
 

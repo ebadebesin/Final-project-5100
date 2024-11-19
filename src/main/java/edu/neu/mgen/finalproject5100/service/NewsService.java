@@ -25,7 +25,7 @@ public class NewsService {
 //    @Value("${newsapi.key}")
 //    private String newsApiKey;
 
-    private final String apiUrl = "http://www.terryye.com/news/newsApi.php";
+    private final String apiUrl = "https://www.terryye.com/news/newsApi.php";
 
     private final RestTemplate restTemplate;
 
@@ -73,17 +73,25 @@ public class NewsService {
             if (response == null || response.totalResults == 0 || response.news.isEmpty()) {
                 return null;
             }
+            News newsWithContent = null;
+            for(News news : response.news ){
+                if(news.content != null){
+                    newsWithContent = news;
+                    break;
+                }
+            }
+            if(newsWithContent == null ){
+                return null;
+            }
 
-            News news = response.news.getFirst();
             DateFormat df = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss Z");
-            Date date = df.parse(news.pubDate + " " + news.pubDateTZ);
-
+            Date date = df.parse(newsWithContent.pubDate + " " + newsWithContent.pubDateTZ);
             return new Article(
                     null,
                     date,
-                    news.getTitle(),
-                    news.getContent(),
-                    news.getImage_url()
+                    newsWithContent.getTitle(),
+                    newsWithContent.getContent(),
+                    newsWithContent.getImage_url()
             );
 
         } catch (Exception e) {

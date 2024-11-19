@@ -6,9 +6,11 @@ import StarIcon from "@mui/icons-material/Star";
 import TopBar from "./Components/TopBar";
 import { useArticles } from "./Hooks/UseArticles";
 import { Link } from "react-router-dom";
+import { useScores } from "./Hooks/UseScores";
 
 export default function Today() {
     const { getLatest } = useArticles();
+
     const { isPending, error, data, isFetching } = getLatest();
 
     /*
@@ -33,19 +35,29 @@ export default function Today() {
     if (error) {
         article.title = error.message;
     }
+
+    const { getLastWeek, getLastYear } = useScores();
+    let scores = {};
+    if (getLastWeek.data && getLastWeek.data) {
+        scores = {
+            lastWeek: getLastWeek?.data?.score,
+            lastYear: getLastYear?.data?.score,
+        };
+    }
+
     return (
         <>
             <TopBar title="Today">
                 <Stack direction="row" spacing={1}>
                     <Chip
                         icon={<WhatshotIcon />}
-                        label="152"
+                        label={"" + scores?.lastWeek}
                         color="primary"
                         size="small"
                     />
                     <Chip
                         icon={<StarIcon />}
-                        label="226"
+                        label={"" + scores?.lastYear}
                         color="success"
                         size="small"
                     />

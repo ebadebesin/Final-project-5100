@@ -1,5 +1,7 @@
 package edu.neu.mgen.finalproject5100.repository;
+
 import java.util.*;
+
 import edu.neu.mgen.finalproject5100.model.Article;
 import edu.neu.mgen.finalproject5100.util.DateUtil;
 import com.google.api.core.ApiFuture;
@@ -53,7 +55,7 @@ public class ArticleRepository {
         }
     }
 
-    public ArrayList<Article> findByIds(ArrayList<String> ids) {
+    public ArrayList<Article> findAllByIds(ArrayList<String> ids) {
         if (ids == null || ids.isEmpty()) {
             return null;
         }
@@ -104,7 +106,7 @@ public class ArticleRepository {
     public Article findLatest() {
         try {
             Firestore firestore = FirestoreClient.getFirestore();
-            ApiFuture<QuerySnapshot> future = firestore.collection(COLLECTION_NAME).orderBy("date").limit(1).get();
+            ApiFuture<QuerySnapshot> future = firestore.collection(COLLECTION_NAME).orderBy("date", Query.Direction.DESCENDING).limit(1).get();
 
             List<QueryDocumentSnapshot> documents = future.get().getDocuments();
             if (!documents.isEmpty()) {

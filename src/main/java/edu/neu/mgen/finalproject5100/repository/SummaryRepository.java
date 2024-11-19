@@ -1,9 +1,9 @@
 package edu.neu.mgen.finalproject5100.repository;
 
 import edu.neu.mgen.finalproject5100.model.Summary;
-import org.springframework.data.jpa.repository.JpaRepository;
-import org.springframework.data.jpa.repository.Query;
-import java.util.Optional;
+// import org.springframework.data.jpa.repository.JpaRepository;
+// import org.springframework.data.jpa.repository.Query;
+// import java.util.Optional;
 
 import com.google.api.core.ApiFuture;
 import com.google.cloud.firestore.*;
@@ -18,7 +18,7 @@ import java.util.concurrent.ExecutionException;
 public class SummaryRepository {
     private static final String COLLECTION_NAME = "summaries";
 
-    public Summary save(Summary summary) {
+    public Summary save(Summary summary, String userId) {
         try {
             Firestore firestore = FirestoreClient.getFirestore();
             
@@ -26,6 +26,9 @@ public class SummaryRepository {
             if (summary.getId() == null) {
                 summary.setId(firestore.collection(COLLECTION_NAME).document().getId());
             }
+
+            // Assign the userId to the summary
+            summary.setUserId(userId);
 
             ApiFuture<WriteResult> future = firestore
                 .collection(COLLECTION_NAME)

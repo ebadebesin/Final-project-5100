@@ -13,6 +13,8 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.slf4j.Logger;
 
+import java.util.Date;
+
 // import java.time.LocalDateTime;
 // import java.util.List;
 
@@ -29,82 +31,58 @@ public class SummaryController {
      @Autowired
      private SummaryRepository summaryRepository;
     
+    // @PostMapping("/evaluate")
+    // public ResponseEntity<?> evaluateSummary(@RequestBody Summary summary) {
+    //     try {
+    //         logger.info("Received summary for evaluation: {}", summary);
+    //         Summary evaluatedSummary = openAIService.evaluateSummary(summary);
+    //         return ResponseEntity.ok(evaluatedSummary);
+    //     } catch (Exception e) {
+    //         logger.error("Error evaluating summary: ", e);
+    //         return ResponseEntity.internalServerError()
+    //             .body(new ErrorResponse("Error evaluating summary: " + e.getMessage()));
+    //     }
+    // }
+
     @PostMapping("/evaluate")
-    public ResponseEntity<?> evaluateSummary(@RequestBody Summary summary) {
+    public ResponseEntity<?> evaluateSummary(@RequestBody Summary summary, @RequestHeader(value = "userId", required = false) String userId) {
         try {
             logger.info("Received summary for evaluation: {}", summary);
+
+            // Use a default/test userId if not provided in the request
+            if (userId == null || userId.isEmpty()) {
+                userId = "test-user-1"; // Replace with a more meaningful default if needed
+            }
+
+            // Attach userId and set submission date
+            summary.setUserId(userId);
+            summary.setSubmissionDate(new Date());
+
+            // Evaluate and save the summary
             Summary evaluatedSummary = openAIService.evaluateSummary(summary);
-            return ResponseEntity.ok(evaluatedSummary);
+            Summary savedSummary = summaryRepository.save(evaluatedSummary, userId);
+
+            return ResponseEntity.ok(savedSummary);
         } catch (Exception e) {
             logger.error("Error evaluating summary: ", e);
             return ResponseEntity.internalServerError()
-                .body(new ErrorResponse("Error evaluating summary: " + e.getMessage()));
+                    .body(new ErrorResponse("Error evaluating summary: " + e.getMessage()));
         }
     }
-    @GetMapping("/test")
-    public ResponseEntity<?> test() {
-        Summary summary = new Summary();
-        summary.setArticleId("fdjalkfdla");
-        summary.setOriginalText("fdjalkfdla");
-        summary.setUserSummary("fdjalkfdla");
-        summary.setFeedback("fdjalkfdla");
-        summary.setScore(111);
-        Summary sumRet = summaryRepository.save(summary);
-        return ResponseEntity.ok(sumRet);
-    }
+
+
+
+
+    // @GetMapping("/test")
+    // public ResponseEntity<?> test() {
+    //     Summary summary = new Summary();
+    //     summary.setArticleId("fdjalkfdla");
+    //     summary.setOriginalText("fdjalkfdla");
+    //     summary.setUserSummary("fdjalkfdla");
+    //     summary.setFeedback("fdjalkfdla");
+    //     summary.setScore(111);
+    //     Summary sumRet = summaryRepository.save(summary);
+    //     return ResponseEntity.ok(sumRet);
+    // }
 
 }
-
-
-
-
-
-
-
-
-
-// import edu.neu.mgen.finalproject5100.model.Summary;
-// import edu.neu.mgen.finalproject5100.repository.SummaryRepository;
-// import edu.neu.mgen.finalproject5100.service.OpenAIService;
-
-// import org.springframework.beans.factory.annotation.Autowired;
-// import org.springframework.http.ResponseEntity;
-// import org.springframework.web.bind.annotation.*;
-// import java.time.LocalDateTime;
-// import java.util.Map;
-
-// @RestController
-// @RequestMapping("/api/summaries")
-// @CrossOrigin(origins = "http://localhost:8080")
-// public class SummaryController {
-//     @Autowired
-//     private SummaryRepository summaryRepository;
-    
-//     @Autowired
-//     private OpenAIService openAIService;
-
-//     @PostMapping("/evaluate")
-//     public ResponseEntity<?> evaluateSummary(@RequestBody Map<String, String> request) {
-//         String originalText = request.get("originalText");
-//         String userSummary = request.get("userSummary");
-//         Long articleId = Long.parseLong(request.get("articleId"));
-
-//         Map<String, Object> evaluation = openAIService.evaluateSummary(originalText, userSummary);
-        
-//         Summary summary = new Summary();
-//         summary.setArticleId(articleId);
-//         summary.setUserSummary(userSummary);
-//         summary.setScore((Integer) evaluation.get("score"));
-//         summary.setFeedback((String) evaluation.get("feedback"));
-//         summary.setSubmissionDate(LocalDateTime.now());
-        
-//         summaryRepository.save(summary);
-        
-//         return ResponseEntity.ok(evaluation);
-//     }
-
-//     @GetMapping("/best/{articleId}")
-//     public ResponseEntity<?> getBestScore(@PathVariable Long articleId) {
-//         return ResponseEntity.ok(summaryRepository.findBestScoreByArticleId(articleId));
-//     }
-// }

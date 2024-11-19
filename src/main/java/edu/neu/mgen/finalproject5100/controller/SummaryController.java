@@ -13,10 +13,13 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.slf4j.Logger;
 
+import java.time.LocalDate;
 import java.util.Date;
+import java.util.HashMap;
+import java.util.Map;
 
 // import java.time.LocalDateTime;
-// import java.util.List;
+import java.util.List;
 
 @RestController
 @RequestMapping("/api/summaries")
@@ -60,7 +63,9 @@ public class SummaryController {
 
             // Evaluate and save the summary
             Summary evaluatedSummary = openAIService.evaluateSummary(summary);
-            Summary savedSummary = summaryRepository.save(evaluatedSummary, userId);
+            // Summary savedSummary = summaryRepository.save(evaluatedSummary, userId);
+            // Save or update in the database
+            Summary savedSummary = summaryRepository.saveOrUpdate(evaluatedSummary, userId);
 
             return ResponseEntity.ok(savedSummary);
         } catch (Exception e) {
@@ -69,6 +74,37 @@ public class SummaryController {
                     .body(new ErrorResponse("Error evaluating summary: " + e.getMessage()));
         }
     }
+
+    @GetMapping("/submissionCounts")
+    public ResponseEntity<?> getSubmissionCounts(@RequestParam String userId) {
+        try {
+            int last7DaysCount = summaryRepository.countSubmissions(userId, LocalDate.now().minusDays(7));
+            int last365DaysCount = summaryRepository.countSubmissions(userId, LocalDate.now().minusDays(365));
+            Map<String, Integer> response = new HashMap<>();
+            response.put("last7Days", last7DaysCount);
+            response.put("last365Days", last365DaysCount);
+            return ResponseEntity.ok(response);
+        } catch (Exception e) {
+            return ResponseEntity.internalServerError()
+                .body(new ErrorResponse("Error retrieving submission counts: " + e.getMessage()));
+        }
+    }
+
+    @GetMapping("/submissions")
+    public ResponseEntity<?> getSubmissions(
+        @RequestParam String userId,
+        @RequestParam int page) {
+        try {
+            int pageSize = 50;
+            List<Summary> submissions = summaryRepository.getSubmissions(userId, page, pageSize);
+            return ResponseEntity.ok(submissions);
+        } catch (Exception e) {
+            return ResponseEntity.internalServerError()
+                .body(new ErrorResponse("Error retrieving submissions: " + e.getMessage()));
+        }
+    }
+
+
 
 
 

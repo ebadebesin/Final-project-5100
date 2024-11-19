@@ -67,14 +67,15 @@ export default function Today() {
                 >
                     <Box></Box>
                     <Box>
-                        <Button
-                            variant="contained"
-                            component={Link}
-                            to={"/summary" + (article?.id || "")}
-                            endIcon={<SendIcon />}
-                        >
-                            Try Summarize
-                        </Button>
+                    <Button
+                        variant="contained"
+                        component={Link}
+                        to={`/summary/${article?.id}`} // Pass article ID in the URL
+                        // to={`/summary?id=${article.id}`}
+                        endIcon={<SendIcon />}
+                    >
+                        Try Summarize
+                    </Button>
                     </Box>
                 </Stack>
             </Container>

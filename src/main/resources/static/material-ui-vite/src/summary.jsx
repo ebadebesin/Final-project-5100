@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from 'react';
 import { 
   Box, 
@@ -18,6 +17,8 @@ import TopBar from './Components/TopBar'
 import BottomNavBar from './Components/BottomNavBar'
 import { useArticles } from "./Hooks/UseArticles";
 import { useUser } from "./Hooks/UseUser";
+import { Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle } from "@mui/material";
+
 
 const SummaryComponent = () => {
   const [summary, setSummary] = useState('');
@@ -27,6 +28,9 @@ const SummaryComponent = () => {
   const navigate = useNavigate();
   const { articleId } = useParams(); // Access article ID from URL
   const [article, setArticle] = useState(null);
+
+  const [isDialogOpen, setDialogOpen] = useState(false);
+
 
   useEffect(() => {
     const fetchArticle = async () => {
@@ -100,9 +104,18 @@ const SummaryComponent = () => {
   };
 
   const handleTryAgain = () => {
-    setSummary('');
+    // setSummary('');
     setFeedback(null);
-    setError(null);
+    // setError(null);
+    setDialogOpen(true);
+  };
+
+  const handleConfirm = async () => {
+    setDialogOpen(false);
+  };
+
+  const handleCancel = () => {
+    setDialogOpen(false);
   };
 
   const handleTryLater = () => {
@@ -135,7 +148,7 @@ const SummaryComponent = () => {
       <Paper elevation={3} sx={{ padding: 3, marginBottom: 3 }}>
         <Typography variant="h5" gutterBottom>
           Read 
-          {article.title}
+          {/* {article.title} */}
         </Typography>
         <Typography paragraph>
           {previewText}
@@ -189,6 +202,29 @@ const SummaryComponent = () => {
             >
               Try Again
             </Button>
+
+            <Dialog
+            open={isDialogOpen}
+            onClose={handleCancel}
+            aria-labelledby="alert-dialog-title"
+            aria-describedby="alert-dialog-description"
+          >
+            <DialogTitle id="alert-dialog-title">{"Confirm Submission"}</DialogTitle>
+            <DialogContent>
+              <DialogContentText id="alert-dialog-description">
+                Submitting a new summary will overwrite your previous score and feedback. Are you sure you want to continue?
+              </DialogContentText>
+            </DialogContent>
+            <DialogActions>
+              <Button onClick={handleCancel} color="secondary">
+                Cancel
+              </Button>
+              <Button onClick={handleConfirm} color="primary" autoFocus>
+                Confirm
+              </Button>
+            </DialogActions>
+          </Dialog>
+
           </CardContent>
         </Card>
       )}

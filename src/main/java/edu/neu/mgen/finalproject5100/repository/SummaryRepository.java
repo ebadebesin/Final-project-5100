@@ -10,7 +10,10 @@ import com.google.cloud.firestore.*;
 import com.google.firebase.cloud.FirestoreClient;
 import org.springframework.stereotype.Repository;
 
+import java.time.LocalDate;
+import java.time.ZoneId;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 import java.util.concurrent.ExecutionException;
 
@@ -41,6 +44,76 @@ public class SummaryRepository {
             throw new RuntimeException("Error saving summary", e);
         }
     }
+
+
+    public Summary saveOrUpdate(Summary summary, String userId) {
+        try {
+            Firestore firestore = FirestoreClient.getFirestore();
+            CollectionReference summaries = firestore.collection(COLLECTION_NAME);
+    
+            // Query for an existing summary by userId and articleId
+            ApiFuture<QuerySnapshot> query = summaries
+                .whereEqualTo("userId", summary.getUserId())
+                .whereEqualTo("articleId", summary.getArticleId())
+                .limit(1)
+                .get();
+    
+            List<QueryDocumentSnapshot> documents = query.get().getDocuments();
+    
+            if (!documents.isEmpty()) {
+                // Update existing document
+                DocumentReference docRef = documents.get(0).getReference();
+                docRef.update("score", summary.getScore());
+                docRef.update("feedback", summary.getFeedback());
+                docRef.update("userSummary", summary.getUserSummary());
+                docRef.update("submissionDate", new Date());
+                return summary;
+            } else {
+                // Save a new summary if no match is found
+                if (summary.getId() == null) {
+                    summary.setId(summaries.document().getId());
+                }
+                summaries.document(summary.getId()).set(summary).get();
+                return summary;
+            }
+        } catch (InterruptedException | ExecutionException e) {
+            throw new RuntimeException("Error saving or updating summary", e);
+        }
+    }
+    
+    public int countSubmissions(String userId, LocalDate sinceDate) {
+        try {
+            Firestore firestore = FirestoreClient.getFirestore();
+            ApiFuture<QuerySnapshot> future = firestore.collection(COLLECTION_NAME)
+                .whereEqualTo("userId", userId)
+                .whereGreaterThanOrEqualTo("submissionDate", Date.from(sinceDate.atStartOfDay(ZoneId.systemDefault()).toInstant()))
+                .get();
+            return future.get().size();
+        } catch (InterruptedException | ExecutionException e) {
+            throw new RuntimeException("Error counting submissions", e);
+        }
+    }
+    
+    public List<Summary> getSubmissions(String userId, int page, int pageSize) {
+        try {
+            Firestore firestore = FirestoreClient.getFirestore();
+            ApiFuture<QuerySnapshot> future = firestore.collection(COLLECTION_NAME)
+                .whereEqualTo("userId", userId)
+                .orderBy("submissionDate", Query.Direction.DESCENDING)
+                .offset((page - 1) * pageSize)
+                .limit(pageSize)
+                .get();
+    
+            List<Summary> submissions = new ArrayList<>();
+            for (QueryDocumentSnapshot document : future.get().getDocuments()) {
+                submissions.add(document.toObject(Summary.class));
+            }
+            return submissions;
+        } catch (InterruptedException | ExecutionException e) {
+            throw new RuntimeException("Error retrieving submissions", e);
+        }
+    }
+    
 
     public Summary findBestScoreByArticleId(String articleId, String userId) {
         try {

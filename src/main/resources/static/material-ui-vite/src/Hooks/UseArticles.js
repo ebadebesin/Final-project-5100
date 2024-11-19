@@ -13,8 +13,11 @@ export const useArticles = () => {
     const getById = (id) =>
         useQuery({
             queryKey: ["article", id],
-            queryFn: articleApi.queryFn({ path: "/id/" + id }),
+            queryFn: articleApi.queryFn({ path: `/id/${id}` }), // Adjusted path
+            enabled: !!id, // Fetch only if `id` exists
         });
 
     return { getLatest, getById };
 };
+
+

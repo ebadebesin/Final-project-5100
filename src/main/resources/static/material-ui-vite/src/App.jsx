@@ -21,7 +21,7 @@ export default function App() {
                     <Route index element={<Today />} />
                     <Route path="today" element={<Today />} />
                     <Route path="history" element={<ArticleHistory />} />
-                    <Route path="summary" element={<SummaryComponent />} />
+                    <Route path="/summary/:articleId" element={<SummaryComponent />} />
                     <Route path="profile" element={<> </>} />
                     <Route path="*" element={<></>} />
                 </Route>

@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { 
   Box, 
   Paper, 
@@ -12,9 +12,13 @@ import {
   Alert
 } from '@mui/material';
 import CloseIcon from '@mui/icons-material/Close';
-import { useNavigate, Link } from 'react-router-dom';
+import { useNavigate, useParams } from 'react-router-dom';
 import TopBar from './Components/TopBar'
 import BottomNavBar from './Components/BottomNavBar'
+import { useArticles } from "./Hooks/UseArticles";
+import { useUser } from "./Hooks/UseUser";
+import { Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle } from "@mui/material";
+
 
 const SummaryComponent = () => {
   const [summary, setSummary] = useState('');
@@ -22,27 +26,58 @@ const SummaryComponent = () => {
   const [error, setError] = useState(null);
   const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
-  
-  const article = {
-    id: 1,
-    text: `CNN — Before Election Day has even arrived, the “Stop the Steal” movement has reemerged in force, with some of the same activists who tried to overturn former President Donald Trump’s 2020 loss outlining a step-by-step guide to undermine the results if he falls short again.
+  const { articleId } = useParams(); // Access article ID from URL
+  const [article, setArticle] = useState(null);
 
-For months, those activists – who have been priming Trump supporters to believe the only way the former president can lose in 2024 is through fraud – have laid out proposals to thwart a potential Kamala Harris victory. Their plans include challenging results in court, pressuring.`
-  };
+  const [isDialogOpen, setDialogOpen] = useState(false);
 
-  const previewText = article.text.split('. ')[0] + '.';
+
+  useEffect(() => {
+    const fetchArticle = async () => {
+        if (articleId) {
+          try {
+            const response = await fetch(`http://localhost:8080/api/articles/id/${articleId}`);
+            if (!response.ok) {
+              throw new Error("Failed to fetch article");
+            }
+            const articleData = await response.json();
+            console.log("Fetched article:", articleData);
+            setArticle(articleData);
+          } catch (error) {
+            console.error("Error fetching article:", error.message);
+            setError(error.message || "Error fetching article");
+          }
+        }
+      };
+    //         const response = await fetch(`http://localhost:8080/api/articles/latest`);
+    //         const articleData = await response.json();
+    //         setArticle(articleData);
+    //     }
+    // };
+
+    fetchArticle();
+}, [articleId]);
+
+
+  const previewText = article?.content 
+    ? article.content.split('\n').slice(0, 1).join('\n') 
+    : 'Loading article...';
 
   const handleSubmit = async () => {
     setLoading(true);
     setError(null);
+    const { id: userId } = useUser(); // Retrieve user ID
     
     try {
       const response = await fetch('http://localhost:8080/api/summaries/evaluate', {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
+        headers: { 
+          'Content-Type': 'application/json',
+          'userId': userId, // Include userId in headers
+        },
         body: JSON.stringify({
           articleId: article.id,
-          originalText: article.text,
+          originalText: article.content,
           userSummary: summary,
         }),
       });
@@ -56,13 +91,6 @@ For months, those activists – who have been priming Trump supporters to believ
       
       if (result && result.score != null && result.feedback) {
         setFeedback(result);
-        // setFeedback({
-        //   score: result.score,
-        //   conciseness: result.conciseness,
-        //   clarity: result.clarity,
-        //   length: result.length,
-        //   readability: result.readability,
-        // });
 
       } else {
         throw new Error("Unexpected response structure from backend.");
@@ -76,9 +104,18 @@ For months, those activists – who have been priming Trump supporters to believ
   };
 
   const handleTryAgain = () => {
-    setSummary('');
+    // setSummary('');
     setFeedback(null);
-    setError(null);
+    // setError(null);
+    setDialogOpen(true);
+  };
+
+  const handleConfirm = async () => {
+    setDialogOpen(false);
+  };
+
+  const handleCancel = () => {
+    setDialogOpen(false);
   };
 
   const handleTryLater = () => {
@@ -110,10 +147,12 @@ For months, those activists – who have been priming Trump supporters to believ
 
       <Paper elevation={3} sx={{ padding: 3, marginBottom: 3 }}>
         <Typography variant="h5" gutterBottom>
-          Read the Article - Article name
+          Read 
+          {/* {article.title} */}
         </Typography>
         <Typography paragraph>
           {previewText}
+          {/* {article?.content} */}
         </Typography>
       </Paper>
 
@@ -156,18 +195,6 @@ For months, those activists – who have been priming Trump supporters to believ
             <Typography paragraph>
               {feedback.feedback}
             </Typography>
-            {/* <Typography variant="body1" sx={{ marginTop: 1 }}>
-              <strong>Conciseness:</strong> {feedback.conciseness}
-            </Typography>
-            <Typography variant="body1" sx={{ marginTop: 1 }}>
-              <strong>Clarity:</strong> {feedback.clarity}
-            </Typography>
-            <Typography variant="body1" sx={{ marginTop: 1 }}>
-              <strong>Length:</strong> {feedback.length}
-            </Typography>
-            <Typography variant="body1" sx={{ marginTop: 1 }}>
-              <strong>Readability:</strong> {feedback.readability}
-            </Typography> */}
             <Button 
               variant="outlined" 
               onClick={handleTryAgain}
@@ -175,6 +202,29 @@ For months, those activists – who have been priming Trump supporters to believ
             >
               Try Again
             </Button>
+
+            <Dialog
+            open={isDialogOpen}
+            onClose={handleCancel}
+            aria-labelledby="alert-dialog-title"
+            aria-describedby="alert-dialog-description"
+          >
+            <DialogTitle id="alert-dialog-title">{"Confirm Submission"}</DialogTitle>
+            <DialogContent>
+              <DialogContentText id="alert-dialog-description">
+                Submitting a new summary will overwrite your previous score and feedback. Are you sure you want to continue?
+              </DialogContentText>
+            </DialogContent>
+            <DialogActions>
+              <Button onClick={handleCancel} color="secondary">
+                Cancel
+              </Button>
+              <Button onClick={handleConfirm} color="primary" autoFocus>
+                Confirm
+              </Button>
+            </DialogActions>
+          </Dialog>
+
           </CardContent>
         </Card>
       )}
@@ -194,3 +244,7 @@ For months, those activists – who have been priming Trump supporters to believ
 };
 
 export default SummaryComponent;
+
+
+//work on saving summary to database once and auto replacing score and feedback when 
+//user submits summary again

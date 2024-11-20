@@ -25,13 +25,19 @@ public class OpenAIService {
         
         // Define the criteria and ask for feedback in a JSON format
         String promptContent = String.format("""
-            Please evaluate this summary of the article and provide:
-            1. A score from 1-10
-            2. Constructive feedback on the following criteria: conciseness, clarity, length, and readability.
+            Please evaluate the provided summary of the article and respond as follows:
+
+            1. Provide an overall score (from 0 to 10) based on the summary's ability to accurately and effectively convey the main points of the article. A low-quality or vague summary should receive a correspondingly low score.
+            2. Offer constructive feedback with detail based on these criteria with each criteria title in bold:
+                Conciseness: Does the summary appropriately condense the article, avoiding unnecessary details while capturing the essence?
+                Clarity: Does the summary present specific, coherent, and understandable points? Vague responses should receive lower clarity scores.
+                Length: Is the length of the summary adequate to cover the article's main points? Summaries that are overly brief or lack sufficient information should be marked down.
+                Readability: Does the summary demonstrate proper grammar, sentence structure, and flow? While readability may be acceptable, lack of content should also impact the overall feedback.
             
-            Summary: %s
-            
-            Respond in JSON format:
+            Summary:
+            %s
+
+            Respond in the following JSON format:
             {
                 "score": <number>,
                 "feedback": {

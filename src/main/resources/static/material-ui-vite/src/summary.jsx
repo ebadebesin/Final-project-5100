@@ -150,10 +150,13 @@ const SummaryComponent = () => {
           Read 
           {/* {article.title} */}
         </Typography>
-        <Typography paragraph>
-          {previewText}
+        <Box sx={{ whiteSpace: 'pre-wrap' }}>
+              <Typography variant="body1">{previewText}</Typography>
+            </Box>
+        {/* <Typography paragraph>
+          {previewText} */}
           {/* {article?.content} */}
-        </Typography>
+        {/* </Typography> */}
       </Paper>
 
       <Paper elevation={3} sx={{ padding: 3 }}>
@@ -192,9 +195,30 @@ const SummaryComponent = () => {
             <Typography variant="h6" gutterBottom>
               Score: {feedback.score}/10
             </Typography>
-            <Typography paragraph>
+            <Box sx={{ whiteSpace: 'pre-wrap' }}>
+              {feedback.feedback.split('\n').map((line, index) => {
+                const parts = line.split(':');
+                if (parts.length > 1) {
+                  // Criteria title and description
+                  return (
+                    <React.Fragment key={index}>
+                      <Typography variant="body1" style={{ fontWeight: 'bold' }}>
+                        {parts[0]}
+                      </Typography>
+                      <Typography variant="body1">{parts[1] + (index === feedback.feedback.split('\n').length - 1 ? '' : ' ')}</Typography>
+                    </React.Fragment>
+                  );
+                } else {
+                  return <Typography variant="body1" key={index}>{line}<br /></Typography>;
+                }
+              })}
+            </Box>
+            {/* <Box sx={{ whiteSpace: 'pre-wrap' }}>
+              <Typography variant="body1">{feedback.feedback}</Typography>
+            </Box> */}
+            {/* <Typography paragraph>
               {feedback.feedback}
-            </Typography>
+            </Typography> */}
             <Button 
               variant="outlined" 
               onClick={handleTryAgain}

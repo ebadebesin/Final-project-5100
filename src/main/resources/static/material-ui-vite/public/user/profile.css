@@ -10,12 +10,26 @@ body {
     justify-content: center;
     align-items: center;
     flex-direction: column;
-    margin-top: 70px;
+    margin-top: 20px;
 }
 
-.proflie {
+.profile {
+    margin-left: 30px;
+    /* display: block; */
+    align-self: flex-start;
+    /* Align only this element to the start (left) */
     text-align: left;
-    border-bottom: black;
+}
+
+.horizontal-line {
+    border-top: 1px solid rgb(135, 135, 135);
+    /* Create a thin horizontal line */
+    width: 100%;
+    /* Ensure it spans the container width */
+    height: 0;
+    /* No vertical space */
+    margin: 10px 0px 40px;
+    /* Space around the line */
 }
 
 .calendar {
@@ -62,7 +76,7 @@ body {
 
 .names {
     font-weight: bold;
-    font-size: large;
+    font-size: x-large;
 }
 
 .image {
@@ -70,4 +84,20 @@ body {
     height: 110px;
     border-radius: 50%;
     object-fit: cover;
+}
+
+hr {
+    margin-top: 10px;
+    margin-bottom: 40px;
+}
+
+.modal-content {
+    margin-top: 100px;
+    position: fixed;
+    text-align: center;
+    top: 20%;
+    /* 距离窗口顶部 50% */
+    left: 50%;
+    /* 距离窗口左侧 50% */
+    transform: translate(-50%, -50%);
 }

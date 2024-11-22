@@ -8,6 +8,18 @@ import { useArticles } from "./Hooks/UseArticles";
 import { Link } from "react-router-dom";
 import { useScores } from "./Hooks/UseScores";
 
+function TextWithLineBreaks(props) {
+    console.log("TextWithLineBreaks", props);
+    if (!props.children) {
+        return <></>;
+    }
+    const textWithBreaks = props.children
+        .split("\n")
+        .map((text, index) => <p key={index}>{text}</p>);
+
+    return <div>{textWithBreaks}</div>;
+}
+
 export default function Today() {
     const { getLatest } = useArticles();
 
@@ -35,7 +47,7 @@ export default function Today() {
     if (error) {
         article.title = error.message;
     }
-
+    /*
     const { getLastWeek, getLastYear } = useScores();
     let scores = {};
     if (getLastWeek.data && getLastWeek.data) {
@@ -44,30 +56,44 @@ export default function Today() {
             lastYear: getLastYear?.data?.score,
         };
     }
-
+*/
+    const { getScores } = useScores();
+    let { data: scores } = getScores();
+    if (!scores) {
+        scores = {
+            last7Days: "-",
+            last365Days: "-",
+        };
+    }
     return (
         <>
             <TopBar title="Today">
                 <Stack direction="row" spacing={1}>
-                    <Chip
-                        icon={<WhatshotIcon />}
-                        label={"" + scores?.lastWeek}
-                        color="primary"
-                        size="small"
-                    />
-                    <Chip
-                        icon={<StarIcon />}
-                        label={"" + scores?.lastYear}
-                        color="success"
-                        size="small"
-                    />
+                    {scores && (
+                        <>
+                            <Chip
+                                icon={<WhatshotIcon />}
+                                label={"" + scores?.last7Days}
+                                color="primary"
+                                size="small"
+                            />
+                            <Chip
+                                icon={<StarIcon />}
+                                label={"" + scores?.last365Days}
+                                color="success"
+                                size="small"
+                            />
+                        </>
+                    )}
                 </Stack>
             </TopBar>
             <Container>
                 <article>
                     <h1>{article?.title || ""}</h1>
                     <img src={article?.poster || ""} width={"100%"}></img>
-                    <>{article?.content || ""}</>
+                    <TextWithLineBreaks>
+                        {article?.content || ""}
+                    </TextWithLineBreaks>
                 </article>
                 <Stack
                     direction="row"
@@ -79,15 +105,15 @@ export default function Today() {
                 >
                     <Box></Box>
                     <Box>
-                    <Button
-                        variant="contained"
-                        component={Link}
-                        to={`/summary/${article?.id}`} // Pass article ID in the URL
-                        // to={`/summary?id=${article.id}`}
-                        endIcon={<SendIcon />}
-                    >
-                        Try Summarize
-                    </Button>
+                        <Button
+                            variant="contained"
+                            component={Link}
+                            to={`/summary/${article?.id}`} // Pass article ID in the URL
+                            // to={`/summary?id=${article.id}`}
+                            endIcon={<SendIcon />}
+                        >
+                            Try Summarize
+                        </Button>
                     </Box>
                 </Stack>
             </Container>

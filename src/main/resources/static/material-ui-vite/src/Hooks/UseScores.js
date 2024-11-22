@@ -1,9 +1,12 @@
 import ApiClient from "../Services/ApiClient";
 import { useQuery, useQueries } from "@tanstack/react-query";
+import { useUser } from "./UseUser";
 
-const scoreApi = new ApiClient("/scores");
+const scoreApi = new ApiClient("/summaries/submissionCounts");
 
 export const useScores = () => {
+    const { id } = useUser();
+    /*
     const [getLastWeek, getLastYear] = useQueries({
         queries: [
             {
@@ -18,4 +21,12 @@ export const useScores = () => {
     });
 
     return { getLastWeek, getLastYear };
+    */
+
+    const getScores = () =>
+        useQuery({
+            queryKey: ["scores"],
+            queryFn: scoreApi.queryFn({ params: { userId: id } }),
+        });
+    return { getScores };
 };

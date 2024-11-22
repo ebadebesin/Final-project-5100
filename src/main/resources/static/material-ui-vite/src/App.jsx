@@ -2,7 +2,7 @@ import { Container, Paper } from "@mui/material";
 import * as React from "react";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 
-import ArticleHistory from "./ArticleHistory";
+import ArticleHistory from "./SummaryHistory";
 import BottomNavBar from "./Components/BottomNavBar";
 import Today from "./Today";
 

@@ -25,9 +25,4 @@ public class DateUtil {
     public static Date getEndOfDate(Date date) {
         return setNewTime(date, 23, 59, 59, 999);
     }
-
-    public static Date parse(String date) throws ParseException {
-        DateFormat df = new SimpleDateFormat("EEE MMM dd kk:mm:ss z yyyy", Locale.ENGLISH);
-        return df.parse(date);
-    }
 }

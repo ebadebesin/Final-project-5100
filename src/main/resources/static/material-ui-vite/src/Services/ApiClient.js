@@ -33,9 +33,9 @@ export default class ApiClient {
         return url;
     };
 
-    postFn = ({ path = "", params = {} }) => {
+    postFn = ({ path: _queryPath = "", params: _queryParams = {} }) => {
         return async (data) => {
-            const url = this.buidUrl(path, params);
+            const url = this.buidUrl(_queryPath, _queryParams);
             const response = await fetch(url, {
                 method: "POST",
                 headers: {
@@ -48,9 +48,10 @@ export default class ApiClient {
         };
     };
 
-    queryFn = ({ path = "", params = {} }) => {
-        return async () => {
-            const url = this.buidUrl(path, params);
+    queryFn = ({ path: _queryPath = "", params: _queryParams = {} }) => {
+        return async ({ pageParam }) => {
+            _queryParams = { ..._queryParams, ...pageParam };
+            const url = this.buidUrl(_queryPath, _queryParams);
             const response = await fetch(url);
             return await response.json();
         };

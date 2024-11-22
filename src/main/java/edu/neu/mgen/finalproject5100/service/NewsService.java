@@ -7,6 +7,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 import org.springframework.web.util.UriComponentsBuilder;
+
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -40,6 +41,7 @@ public class NewsService {
 
     }
 
+
     @Data
     private static class NewsResponse {
         @JsonProperty("results")
@@ -55,6 +57,11 @@ public class NewsService {
     public NewsService(RestTemplate restTemplate) {
         this.restTemplate = restTemplate;
     }
+    //get the xml from url
+
+    //parse the xml to get the news
+    //return the news
+
 
     public Article getLatest() {
         String url = UriComponentsBuilder.fromHttpUrl(apiUrl)
@@ -74,13 +81,13 @@ public class NewsService {
                 return null;
             }
             News newsWithContent = null;
-            for(News news : response.news ){
-                if(news.content != null){
+            for (News news : response.news) {
+                if (news.content != null) {
                     newsWithContent = news;
                     break;
                 }
             }
-            if(newsWithContent == null ){
+            if (newsWithContent == null) {
                 return null;
             }
 

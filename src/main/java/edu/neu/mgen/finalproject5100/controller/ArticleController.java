@@ -30,7 +30,7 @@ public class ArticleController {
 
     @GetMapping("/latest")
     public ResponseEntity<?> getLatest() {
-        updateNews();
+        //updateNews();
         Article article = articleRepo.findLatest();
         return ResponseEntity.ok(article);
     }

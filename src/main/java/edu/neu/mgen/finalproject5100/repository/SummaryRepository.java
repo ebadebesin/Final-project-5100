@@ -2,6 +2,7 @@ package edu.neu.mgen.finalproject5100.repository;
 
 import edu.neu.mgen.finalproject5100.model.Summary;
 import org.springframework.data.jpa.repository.JpaRepository;
+
 import java.util.Date;
 import java.util.Optional;
 // import org.springframework.data.jpa.repository.JpaRepository;
@@ -52,16 +53,16 @@ public class SummaryRepository {
         try {
             Firestore firestore = FirestoreClient.getFirestore();
             CollectionReference summaries = firestore.collection(COLLECTION_NAME);
-    
+
             // Query for an existing summary by userId and articleId
             ApiFuture<QuerySnapshot> query = summaries
-                .whereEqualTo("userId", summary.getUserId())
-                .whereEqualTo("articleId", summary.getArticleId())
-                .limit(1)
-                .get();
-    
+                    .whereEqualTo("userId", summary.getUserId())
+                    .whereEqualTo("articleId", summary.getArticleId())
+                    .limit(1)
+                    .get();
+
             List<QueryDocumentSnapshot> documents = query.get().getDocuments();
-    
+
             if (!documents.isEmpty()) {
                 // Update existing document
                 DocumentReference docRef = documents.get(0).getReference();
@@ -82,30 +83,33 @@ public class SummaryRepository {
             throw new RuntimeException("Error saving or updating summary", e);
         }
     }
-    
+
     public int countSubmissions(String userId, LocalDate sinceDate) {
+        System.out.println("userId: " + userId);
+        System.out.println("sinceDate: " + sinceDate);
         try {
             Firestore firestore = FirestoreClient.getFirestore();
             ApiFuture<QuerySnapshot> future = firestore.collection(COLLECTION_NAME)
-                .whereEqualTo("userId", userId)
-                .whereGreaterThanOrEqualTo("submissionDate", Date.from(sinceDate.atStartOfDay(ZoneId.systemDefault()).toInstant()))
-                .get();
+                    .whereEqualTo("userId", userId)
+                    .whereGreaterThanOrEqualTo("submissionDate", Date.from(sinceDate.atStartOfDay(ZoneId.systemDefault()).toInstant()))
+                    .get();
             return future.get().size();
         } catch (InterruptedException | ExecutionException e) {
+            System.out.println("Error: " + e.getMessage());
             throw new RuntimeException("Error counting submissions", e);
         }
     }
-    
+
     public List<Summary> getSubmissions(String userId, int page, int pageSize) {
         try {
             Firestore firestore = FirestoreClient.getFirestore();
             ApiFuture<QuerySnapshot> future = firestore.collection(COLLECTION_NAME)
-                .whereEqualTo("userId", userId)
-                .orderBy("submissionDate", Query.Direction.DESCENDING)
-                .offset((page - 1) * pageSize)
-                .limit(pageSize)
-                .get();
-    
+                    .whereEqualTo("userId", userId)
+                    .orderBy("submissionDate", Query.Direction.DESCENDING)
+                    .offset((page - 1) * pageSize)
+                    .limit(pageSize)
+                    .get();
+
             List<Summary> submissions = new ArrayList<>();
             for (QueryDocumentSnapshot document : future.get().getDocuments()) {
                 submissions.add(document.toObject(Summary.class));
@@ -115,7 +119,7 @@ public class SummaryRepository {
             throw new RuntimeException("Error retrieving submissions", e);
         }
     }
-    
+
 
     public Summary findBestScoreByArticleId(String articleId, String userId) {
         try {
@@ -191,7 +195,7 @@ public class SummaryRepository {
                 summaries.add(document.toObject(Summary.class));
             }
             return summaries;
-        } catch (InterruptedException | ExecutionException e) {
+        } catch (Exception e) {
             throw new RuntimeException("Error finding summaries", e);
         }
     }

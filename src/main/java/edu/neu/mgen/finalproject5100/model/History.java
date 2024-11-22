@@ -7,7 +7,12 @@ import java.util.Date;
 
 @Data
 public class History {
-    private ArrayList<Article> articles;
-    private ArrayList<Summary> summaries;
+    @Data
+    public static class Item {
+        private Article article;
+        private Summary summary;
+    }
+
+    private ArrayList<Item> items;
     private long timeline;
 }

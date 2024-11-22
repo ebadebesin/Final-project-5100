@@ -8,7 +8,10 @@ import PersonIcon from "@mui/icons-material/Person";
 import { useLocation, useNavigate, Link } from "react-router-dom";
 
 export default function BottomNavBar({ currentPath }) {
-    currentPath = currentPath.replace(/^\//, "");
+    const location = useLocation();
+    currentPath = currentPath || location.pathname.replace(/^\//, "").toLowerCase();
+
+    // currentPath = currentPath.replace(/^\//, "");
     console.log("currentPath:", currentPath);
     const map = {
         today: 0,
@@ -43,7 +46,13 @@ export default function BottomNavBar({ currentPath }) {
                 label="History"
                 icon={<HistoryIcon />}
             />
-            <BottomNavigationAction label="Profile" icon={<PersonIcon />} />
+            <BottomNavigationAction
+                component={Link}
+                to="/profile"
+                label="Profile"
+                icon={<PersonIcon />}
+            />
+            {/* <BottomNavigationAction label="Profile" icon={<PersonIcon />} /> */}
         </BottomNavigation>
     );
 }

@@ -6,7 +6,7 @@ import ArticleHistory from "./ArticleHistory";
 import BottomNavBar from "./Components/BottomNavBar";
 import Today from "./Today";
 //import feedback.jsx
-import Feedback from "./feedback";
+import FeedbackPage from "./feedback";
 
 const queryClient = new QueryClient();
 import { BrowserRouter, Routes, Route, useLocation } from "react-router-dom";
@@ -24,7 +24,7 @@ export default function App() {
                     <Route path="today" element={<Today />} />
                     <Route path="history" element={<ArticleHistory />} />
                     <Route path="/summary/:articleId" element={<SummaryComponent />} />
-                    <Route path="/feedback" element={<Feedback />} />
+                    <Route path="/feedback/:articleId" element={<FeedbackPage />} />
                     <Route path="profile" element={<> </>} />
                     <Route path="*" element={<></>} />
                 </Route>

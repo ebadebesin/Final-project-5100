@@ -11,7 +11,7 @@ const Signin = () => {
     const handleSubmit = async (e) => {
       e.preventDefault();
       try {
-        const user = await loginWithEmailAndPassword(email, password);
+        const user = await loginWithEmailAndPassword(email, username, password);
         alert('Logging in...');
         // Redirect to another page
         window.location.href = '/Today.jsx'; // Update to a React route if using React Router

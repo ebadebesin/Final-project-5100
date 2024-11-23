@@ -5,13 +5,12 @@ import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import ArticleHistory from "./SummaryHistory";
 import BottomNavBar from "./Components/BottomNavBar";
 import Today from "./Today";
-//import feedback.jsx
+import Profile from "./Profile";
 import FeedbackPage from "./feedback";
 
 const queryClient = new QueryClient();
-import { BrowserRouter, Routes, Route, useLocation } from "react-router-dom";
+import { HashRouter, Routes, Route, useLocation } from "react-router-dom";
 import SummaryComponent from "./summary";
-
 
 export default function App() {
     const location = useLocation();
@@ -23,9 +22,19 @@ export default function App() {
                     <Route index element={<Today />} />
                     <Route path="today" element={<Today />} />
                     <Route path="history" element={<ArticleHistory />} />
-                    <Route path="/summary/:articleId" element={<SummaryComponent />} />
-                    <Route path="/feedback/:articleId" element={<FeedbackPage />} />
-                    <Route path="profile" element={<> </>} />
+                    <Route
+                        path="/summary/:articleId"
+                        element={<SummaryComponent />}
+                    />
+                    <Route
+                        path="/feedback/:articleId"
+                        element={<FeedbackPage />}
+                    />
+                    <Route path="/profile" element={<Profile />} />
+                    <Route
+                        path="/signin"
+                        element={<Profile action={"signin"} />}
+                    />
                     <Route path="*" element={<></>} />
                 </Route>
             </Routes>

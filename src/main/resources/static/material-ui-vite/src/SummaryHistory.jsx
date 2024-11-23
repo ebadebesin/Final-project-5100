@@ -48,7 +48,7 @@ function HistoryItem({ cover, title, date, rate }) {
     );
 }
 
-export default function ArticleHistory() {
+export default function SummaryHistory() {
     const { getList } = useSummaryHistory();
     const {
         data,
@@ -59,11 +59,28 @@ export default function ArticleHistory() {
         isFetchingNextPage,
         status,
     } = getList();
-    if (!data) {
+
+    if (data == undefined) {
         return <></>;
     }
-    console.log(data);
 
+    if (!!data) {
+        return (
+            <>
+                <TopBar title="History" />
+                <Container>
+                    <List
+                        sx={{
+                            width: "100%",
+                            bgcolor: "background.paper",
+                        }}
+                    >
+                        <ListItem>No records</ListItem>
+                    </List>
+                </Container>
+            </>
+        );
+    }
     return (
         <>
             <TopBar title="History" />

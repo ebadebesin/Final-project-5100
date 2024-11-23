@@ -1,103 +1,117 @@
 <!DOCTYPE html>
 <html lang="en">
+    <head>
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <title>Registration</title>
+        <script type="module" src="./register.js" defer></script>
+        <link rel="stylesheet" href="./scene.css" />
+    </head>
 
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Registration</title>
-    <script type="module" src="./register.js" defer></script>
-    <link rel="stylesheet" href="./scene.css">
-</head>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f9;
+            padding: 20px;
+        }
 
-<style>
-    body {
-        font-family: Arial, sans-serif;
-        background-color: #f4f4f9;
-        padding: 20px;
-    }
-    
-    form {
-        background: #fff;
-        padding: 20px;
-        max-width: 400px;
-        margin: auto;
-        box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-        border-radius: 10px;
-    }
-    
-    form div {
-        margin-bottom: 15px;
-    }
-    
-    label {
-        display: block;
-        margin-bottom: 5px;
-    }
-    
-    input[type=" text "],
-    input[type="email "],
-    input[type="password "] {
-        width: 100%;
-        padding: 8px;
-        box-sizing: border-box;
-    }
-    
-    input[type="submit "] {
-        background: #28a745;
-        color: white;
-        padding: 10px 15px;
-        border: none;
-        cursor: pointer;
-        width: 100%;
-        font-weight: 700;
-    }
-    
-    input[type="submit "]:hover {
-        background: #218838;
-    }
-    /* .alert {
+        form {
+            background: #fff;
+            padding: 20px;
+            max-width: 400px;
+            margin: auto;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            border-radius: 10px;
+        }
+
+        form div {
+            margin-bottom: 15px;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 5px;
+        }
+
+        input[type=" text "],
+        input[type="email "],
+        input[type="password "] {
+            width: 100%;
+            padding: 8px;
+            box-sizing: border-box;
+        }
+
+        input[type="submit "] {
+            background: #28a745;
+            color: white;
+            padding: 10px 15px;
+            border: none;
+            cursor: pointer;
+            width: 100%;
+            font-weight: 700;
+        }
+
+        input[type="submit "]:hover {
+            background: #218838;
+        }
+        /* .alert {
         display: none;
     } */
-</style>
+    </style>
 
-<body>
+    <body>
+        <h2>Registration Form</h2>
 
-    <h2>Registration Form</h2>
+        <form action=" " method="POST " id="contactForm">
+            <!-- <div class="alert ">Your message sent</div> -->
+            <label for="email">Email:</label>
+            <div>
+                <input
+                    type="email"
+                    id="email"
+                    name="email"
+                    placeholder="Email"
+                    required
+                />
+            </div>
+            <label for="username ">Username:</label>
+            <div>
+                <input
+                    type="text"
+                    id="username"
+                    name="username"
+                    placeholder="Username"
+                    required
+                />
+            </div>
+            <label for="password ">Password:</label>
+            <div>
+                <input
+                    type="password"
+                    id="password"
+                    name="password"
+                    placeholder="Password"
+                    required
+                />
+            </div>
 
-    <form action=" " method="POST " id="contactForm">
-        <!-- <div class="alert ">Your message sent</div> -->
-        <label for="email">Email:</label>
-        <div>
-
-            <input type="email" id="email" name="email" placeholder="Email" required>
-        </div>
-        <label for="username ">Username:</label>
-        <div>
-
-            <input type="text" id="username" name="username" placeholder="Username" required>
-
-        </div>
-        <label for="password ">Password:</label>
-        <div>
-
-            <input type="password" id="password" name="password" placeholder="Password" required>
-        </div>
-
-        <!-- <label for="confirm_password ">Confirm Password:</label>
+            <!-- <label for="confirm_password ">Confirm Password:</label>
         <input type="password " id="confirm_password " name="confirm_password " placeholder="Confirm_password " required> -->
-        <div>
-            <button id="submit" type="submit">Create Account</button>
-        </div>
+            <div>
+                <button id="submit" type="submit">Create Account</button>
+            </div>
 
-        <div>
-
-            <p>Have an account?
-                <a href="./signin.html">Login Here</a>
-            </p>
-        </div>
-
-
-    </form>
-</body>
-
+            <div>
+                <p>
+                    Have an account?
+                    <a href="./signin.html">Login Here</a>
+                </p>
+            </div>
+        </form>
+    </body>
+    <script
+        src="https://cdn.jsdelivr.net/npm/@iframe-resizer/child"
+        type="text/javascript"
+        async
+    ></script>
 </html>

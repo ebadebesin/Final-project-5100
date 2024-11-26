@@ -9,10 +9,17 @@ import Typography from "@mui/material/Typography";
 import TopBar from "./Components/TopBar";
 import { Button, Container, Rating } from "@mui/material";
 import { useSummaryHistory } from "./Hooks/UseSummaryHistory";
+import { useNavigate } from "react-router-dom";
 
-function HistoryItem({ cover, title, date, rate }) {
+function HistoryItem({ cover, title, date, rate, id }) {
+    const navigate = useNavigate();
     return (
-        <ListItem alignItems="flex-start">
+        <ListItem
+            alignItems="flex-start"
+            onClick={() => {
+                navigate(`/feedback/${id}`);
+            }}
+        >
             <ListItemAvatar>
                 <Avatar
                     alt="Remy Sharp"
@@ -101,6 +108,7 @@ export default function SummaryHistory() {
                                         title={article?.title}
                                         date={article?.date.substring(0, 10)}
                                         rate={summary?.score / 2}
+                                        id={summary?.id}
                                     />
                                     <Divider component="li" />
                                 </React.Fragment>

@@ -64,7 +64,7 @@ export default function SummaryHistory() {
         return <></>;
     }
 
-    if (!!data) {
+    if (!data) {
         return (
             <>
                 <TopBar title="History" />

@@ -1,12 +1,12 @@
 import React, { useState } from "react";
 import {
-  Box,
-  Paper,
-  Typography,
-  TextField,
-  Button,
-  Snackbar,
-  Alert,
+    Box,
+    Paper,
+    Typography,
+    TextField,
+    Button,
+    Snackbar,
+    Alert,
 } from "@mui/material";
 import { useNavigate, useParams } from "react-router-dom";
 import TopBar from "./Components/TopBar";
@@ -14,111 +14,112 @@ import BottomNavBar from "./Components/BottomNavBar";
 import { useUser } from "./Hooks/UseUser";
 
 const SummaryComponent = () => {
-  const [summary, setSummary] = useState("");
-  const [error, setError] = useState(null);
-  const [loading, setLoading] = useState(false);
-  const navigate = useNavigate();
-  const { articleId } = useParams(); // Access article ID from URL
-
-  const handleSubmit = async () => {
-    setLoading(true);
-    setError(null);
+    const [summary, setSummary] = useState("");
+    const [error, setError] = useState(null);
+    const [loading, setLoading] = useState(false);
+    const navigate = useNavigate();
+    const { articleId } = useParams(); // Access article ID from URL
     const { id: userId } = useUser(); // Retrieve user ID
 
-    try {
-      const response = await fetch("http://localhost:8080/api/summaries/evaluate", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          userId: userId, // Include userId in headers
-        },
-        body: JSON.stringify({
-          articleId,
-          userSummary: summary,
-        }),
-      });
+    const handleSubmit = async () => {
+        setLoading(true);
+        setError(null);
 
-      if (!response.ok) {
-        const errorData = await response.json();
-        throw new Error(errorData.message || "Failed to evaluate summary");
-      }
+        try {
+            const response = await fetch("/api/summaries/evaluate", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                    userId: userId, // Include userId in headers
+                },
+                body: JSON.stringify({
+                    articleId,
+                    userSummary: summary,
+                }),
+            });
 
-      const result = await response.json();
-      if (result && result.score != null && result.feedback) {
-        navigate(`/feedback/${articleId}`, { state: { feedback: result } });
-      } else {
-        throw new Error("Unexpected response structure from backend.");
-      }
-    } catch (error) {
-      console.error("Error submitting summary:", error);
-      setError(error.message || "An error occurred while evaluating your summary");
-    } finally {
-      setLoading(false);
-    }
-  };
+            if (!response.ok) {
+                const errorData = await response.json();
+                throw new Error(
+                    errorData.message || "Failed to evaluate summary"
+                );
+            }
 
-  const handleTryLater = () => {
-    navigate("/today"); // Navigate to the desired page (e.g., "Today" page or home)
-  };
+            const result = await response.json();
+            if (result && result.score != null && result.feedback) {
+                navigate(`/feedback/${articleId}`, {
+                    state: { feedback: result },
+                });
+            } else {
+                throw new Error("Unexpected response structure from backend.");
+            }
+        } catch (error) {
+            console.error("Error submitting summary:", error);
+            setError(
+                error.message ||
+                    "An error occurred while evaluating your summary"
+            );
+        } finally {
+            setLoading(false);
+        }
+    };
 
-  return (
-    <Box sx={{ maxWidth: 800, margin: "auto", padding: 3 }}>
-      <TopBar title="Summarize"></TopBar>
-      <Paper elevation={3} sx={{ padding: 3 }}>
-        <Typography variant="h5" gutterBottom>
-          Write Your Summary
-        </Typography>
-        <TextField
-          fullWidth
-          multiline
-          rows={4}
-          value={summary}
-          onChange={(e) => setSummary(e.target.value)}
-          placeholder="Enter your summary here..."
-          sx={{ marginBottom: 2 }}
-        />
-        <Box sx={{ display: "flex", gap: 2 }}>
-          <Button
-            variant="contained"
-            onClick={handleSubmit}
-            disabled={loading || !summary.trim()}
-          >
-            {loading ? "Submitting..." : "Submit Summary"}
-          </Button>
-          <Button
-            variant="outlined"
-            onClick={handleTryLater}
-          >
-            Try Later
-          </Button>
-          
+    const handleTryLater = () => {
+        navigate("/today"); // Navigate to the desired page (e.g., "Today" page or home)
+    };
+
+    return (
+        <Box sx={{ maxWidth: 800, margin: "auto", padding: 3 }}>
+            <TopBar title="Summarize"></TopBar>
+            <Paper elevation={3} sx={{ padding: 3 }}>
+                <Typography variant="h5" gutterBottom>
+                    Write Your Summary
+                </Typography>
+                <TextField
+                    fullWidth
+                    multiline
+                    rows={4}
+                    value={summary}
+                    onChange={(e) => setSummary(e.target.value)}
+                    placeholder="Enter your summary here..."
+                    sx={{ marginBottom: 2 }}
+                />
+                <Box sx={{ display: "flex", gap: 2 }}>
+                    <Button
+                        variant="contained"
+                        onClick={handleSubmit}
+                        disabled={loading || !summary.trim()}
+                    >
+                        {loading ? "Submitting..." : "Submit Summary"}
+                    </Button>
+                    <Button variant="outlined" onClick={handleTryLater}>
+                        Try Later
+                    </Button>
+                </Box>
+            </Paper>
+            <Snackbar
+                open={!!error}
+                autoHideDuration={6000}
+                onClose={() => setError(null)}
+            >
+                <Alert onClose={() => setError(null)} severity="error">
+                    {error}
+                </Alert>
+            </Snackbar>
+            {/* <BottomNavBar /> */}
         </Box>
-      </Paper>
-      <Snackbar
-        open={!!error}
-        autoHideDuration={6000}
-        onClose={() => setError(null)}
-      >
-        <Alert onClose={() => setError(null)} severity="error">
-          {error}
-        </Alert>
-      </Snackbar>
-      {/* <BottomNavBar /> */}
-    </Box>
-  );
+    );
 };
 
 export default SummaryComponent;
 
-
-
 // import React, { useState, useEffect } from 'react';
-// import { 
-//   Box, 
-//   Paper, 
-//   Typography, 
-//   TextField, 
-//   Button, 
+// import {
+//   Box,
+//   Paper,
+//   Typography,
+//   TextField,
+//   Button,
 //   Card,
 //   CardContent,
 //   IconButton,
@@ -133,7 +134,6 @@ export default SummaryComponent;
 // import { useUser } from "./Hooks/UseUser";
 // import { Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle } from "@mui/material";
 
-
 // const SummaryComponent = () => {
 //   const [summary, setSummary] = useState('');
 //   const [feedback, setFeedback] = useState(null);
@@ -144,7 +144,6 @@ export default SummaryComponent;
 //   const [article, setArticle] = useState(null);
 
 //   const [isDialogOpen, setDialogOpen] = useState(false);
-
 
 //   useEffect(() => {
 //     const fetchArticle = async () => {
@@ -172,20 +171,19 @@ export default SummaryComponent;
 //     fetchArticle();
 // }, [articleId]);
 
-
-//   const previewText = article?.content 
-//     ? article.content.split('\n').slice(0, 1).join('\n') 
+//   const previewText = article?.content
+//     ? article.content.split('\n').slice(0, 1).join('\n')
 //     : 'Loading article...';
 
 //   const handleSubmit = async () => {
 //     setLoading(true);
 //     setError(null);
 //     const { id: userId } = useUser(); // Retrieve user ID
-    
+
 //     try {
 //       const response = await fetch('http://localhost:8080/api/summaries/evaluate', {
 //         method: 'POST',
-//         headers: { 
+//         headers: {
 //           'Content-Type': 'application/json',
 //           'userId': userId, // Include userId in headers
 //         },
@@ -202,7 +200,7 @@ export default SummaryComponent;
 //       }
 
 //       const result = await response.json();
-      
+
 //       if (result && result.score != null && result.feedback) {
 //         setFeedback(result);
 
@@ -243,14 +241,14 @@ export default SummaryComponent;
 //   return (
 //     <Box sx={{ maxWidth: 800, margin: 'auto', padding: 3, position: 'relative' }}>
 //       <TopBar title="Summarize"></TopBar>
-//       <IconButton 
-//         onClick={handleClose} 
-//         sx={{ 
-//           position: 'absolute', 
-//           top: 16, 
-//           right: 16, 
-//           color: 'grey.600', 
-//           bgcolor: 'white', 
+//       <IconButton
+//         onClick={handleClose}
+//         sx={{
+//           position: 'absolute',
+//           top: 16,
+//           right: 16,
+//           color: 'grey.600',
+//           bgcolor: 'white',
 //           borderRadius: '50%',
 //           boxShadow: 1,
 //         }}
@@ -261,7 +259,7 @@ export default SummaryComponent;
 
 //       <Paper elevation={3} sx={{ padding: 3, marginBottom: 3 }}>
 //         <Typography variant="h5" gutterBottom>
-//           Read 
+//           Read
 //           {/* {article.title} */}
 //         </Typography>
 //         <Box sx={{ whiteSpace: 'pre-wrap' }}>
@@ -287,15 +285,15 @@ export default SummaryComponent;
 //           sx={{ marginBottom: 2 }}
 //         />
 //         <Box sx={{ display: 'flex', gap: 2 }}>
-//           <Button 
-//             variant="contained" 
+//           <Button
+//             variant="contained"
 //             onClick={handleSubmit}
 //             disabled={loading || !summary.trim() || feedback}
 //           >
 //             {loading ? 'Submitting...' : 'Submit Summary'}
 //           </Button>
-//           <Button 
-//             variant="outlined" 
+//           <Button
+//             variant="outlined"
 //             onClick={handleTryLater}
 //           >
 //             Try Later
@@ -333,8 +331,8 @@ export default SummaryComponent;
 //             {/* <Typography paragraph>
 //               {feedback.feedback}
 //             </Typography> */}
-//             <Button 
-//               variant="outlined" 
+//             <Button
+//               variant="outlined"
 //               onClick={handleTryAgain}
 //               sx={{ marginTop: 2 }}
 //             >
@@ -367,7 +365,6 @@ export default SummaryComponent;
 //         </Card>
 //       )}
 
-
 //       <Snackbar
 //         open={!!error}
 //         autoHideDuration={6000}
@@ -383,6 +380,5 @@ export default SummaryComponent;
 
 // export default SummaryComponent;
 
-
-// //work on saving summary to database once and auto replacing score and feedback when 
+// //work on saving summary to database once and auto replacing score and feedback when
 // //user submits summary again

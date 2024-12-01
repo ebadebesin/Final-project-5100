@@ -23,7 +23,7 @@ export default function App() {
                     <Route path="today" element={<Today />} />
                     <Route path="history" element={<ArticleHistory />} />
                     <Route
-                        path="/summary/:articleId"
+                        path="summary/:articleId"
                         element={<SummaryComponent />}
                     />
                     <Route

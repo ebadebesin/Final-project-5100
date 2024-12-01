@@ -19,27 +19,27 @@ const SummaryComponent = () => {
     const [loading, setLoading] = useState(false);
     const navigate = useNavigate();
     const { articleId } = useParams(); // Access article ID from URL
-
     const { id: userId } = useUser(); // Retrieve user ID
     const handleSubmit = async () => {
         setLoading(true);
         setError(null);
 
+    const handleSubmit = async () => {
+        setLoading(true);
+        setError(null);
+
         try {
-            const response = await fetch(
-                "http://localhost:8080/api/summaries/evaluate",
-                {
-                    method: "POST",
-                    headers: {
-                        "Content-Type": "application/json",
-                        userId: userId, // Include userId in headers
-                    },
-                    body: JSON.stringify({
-                        articleId,
-                        userSummary: summary,
-                    }),
-                }
-            );
+            const response = await fetch("/api/summaries/evaluate", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                    userId: userId, // Include userId in headers
+                },
+                body: JSON.stringify({
+                    articleId,
+                    userSummary: summary,
+                }),
+            });
 
             if (!response.ok) {
                 const errorData = await response.json();

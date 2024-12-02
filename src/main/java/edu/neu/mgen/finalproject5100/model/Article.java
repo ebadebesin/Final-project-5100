@@ -1,5 +1,7 @@
 package edu.neu.mgen.finalproject5100.model;
+
 import java.util.Date;
+
 import edu.neu.mgen.finalproject5100.util.DateUtil;
 import lombok.Data;
 
@@ -14,9 +16,10 @@ public class Article {
     private Date createTime = new Date();
 
 
-    public Article(){
+    public Article() {
     }
-    public Article(String id, Date date,String title,String content, String poster) {
+
+    public Article(String id, Date date, String title, String content, String poster) {
         this.setId(id);
         this.setDate(date);
         this.setTitle(title);
@@ -25,8 +28,8 @@ public class Article {
     }
 
 
-    public void setDate(Date date){
-        this.date =  DateUtil.getStartOfDate(new Date());
+    public void setDate(Date date) {
+        this.date = DateUtil.getStartOfDate(date);
     }
 
 

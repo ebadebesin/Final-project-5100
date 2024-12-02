@@ -5,6 +5,9 @@
         <meta name="viewport" content="width=device-width, initial-scale=1.0" />
         <title>Interactive Calendar with Month Selection</title>
         <link rel="stylesheet" href="./profile.css" />
+
+        <link href="https://cdn.muicss.com/mui-0.10.3/css/mui.min.css" rel="stylesheet" type="text/css" />
+        <script src="https://cdn.muicss.com/mui-0.10.3/js/mui.min.js"></script>
         <!-- <script type="module" src="./profile.js" defer></script> -->
 
         <style>
@@ -64,25 +67,19 @@
 
         <div>
             <img
-                src="./img/a001d59555f7036fa0f3a9436784a6d8.jpg"
+                src="./avatar.jpg"
                 class="image"
             />
         </div>
-        <br /><br />
         <div>
             <span class="names">HUSKY</span>
-        </div>
-        <br /><br />
-        <div>
-            <span class="progress">Your Progress</span>
-            <span class="number">number</span>
         </div>
         <br />
         <div class="calendar">
             <div class="calendar-header">
-                <button onclick="changeMonth(-1)">&#8249;</button>
+                <button class="mui-btn mui-btn--small mui-btn--primary" onclick="changeMonth(-1)">&#8249;</button>
                 <span id="month-year"></span>
-                <button onclick="changeMonth(1)">&#8250;</button>
+                <button class="mui-btn mui-btn--small mui-btn--primary" onclick="changeMonth(1)">&#8250;</button>
             </div>
             <table>
                 <thead>

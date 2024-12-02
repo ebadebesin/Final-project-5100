@@ -20,9 +20,6 @@ const SummaryComponent = () => {
     const navigate = useNavigate();
     const { articleId } = useParams(); // Access article ID from URL
     const { id: userId } = useUser(); // Retrieve user ID
-    const handleSubmit = async () => {
-        setLoading(true);
-        setError(null);
 
     const handleSubmit = async () => {
         setLoading(true);
@@ -70,7 +67,6 @@ const SummaryComponent = () => {
     const handleTryLater = () => {
         navigate("/today"); // Navigate to the desired page (e.g., "Today" page or home)
     };
-
     return (
         <Box sx={{ maxWidth: 800, margin: "auto", padding: 3 }}>
             <TopBar title="Summarize"></TopBar>

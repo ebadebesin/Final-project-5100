@@ -121,6 +121,35 @@ public class SummaryRepository {
     }
 
 
+
+    //remember to add id param to check for id and date
+
+    public List<Summary> getFeedback(String userId, Date submissionDate) {
+        try {
+            Firestore firestore = FirestoreClient.getFirestore();
+            CollectionReference collection = firestore.collection(COLLECTION_NAME);
+    
+            Query query = collection.whereEqualTo("userId", userId);
+            if (submissionDate != null) {
+                query = query.whereEqualTo("submissionDate", submissionDate);
+            }
+    
+            ApiFuture<QuerySnapshot> querySnapshot = query.get();
+            List<Summary> feedbackList = new ArrayList<>();
+            for (QueryDocumentSnapshot document : querySnapshot.get().getDocuments()) {
+                feedbackList.add(document.toObject(Summary.class));
+            }
+            return feedbackList;
+        } catch (InterruptedException | ExecutionException e) {
+            throw new RuntimeException("Error retrieving feedback", e);
+        }
+    }
+
+
+
+
+
+
     public Summary findBestScoreByArticleId(String articleId, String userId) {
         try {
             Firestore firestore = FirestoreClient.getFirestore();

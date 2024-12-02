@@ -13,11 +13,13 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.slf4j.Logger;
 
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.time.LocalDate;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
-
+import java.util.stream.Collectors;
 // import java.time.LocalDateTime;
 import java.util.List;
 
@@ -104,6 +106,66 @@ public class SummaryController {
         }
     }
 
+    @GetMapping("/feedback")
+public ResponseEntity<?> getFeedback(
+        @RequestParam String userId,
+        @RequestParam(required = false) String articleId,
+        @RequestParam(required = false) String submissionDate) {
+    try {
+        Date parsedDate = null;
+        if (submissionDate != null && !submissionDate.isEmpty()) {
+            SimpleDateFormat formatter = new SimpleDateFormat("dd MMMM yyyy");
+            parsedDate = formatter.parse(submissionDate);
+        }
+
+        List<Summary> feedbackList = summaryRepository.getFeedback(userId, parsedDate);
+
+        if (articleId != null) {
+            feedbackList = feedbackList.stream()
+                .filter(feedback -> articleId.equals(feedback.getArticleId()))
+                .collect(Collectors.toList());
+        }
+
+        if (feedbackList.isEmpty()) {
+            return ResponseEntity.noContent().build();
+        }
+
+        return ResponseEntity.ok(feedbackList);
+    } catch (ParseException e) {
+        return ResponseEntity.badRequest().body(new ErrorResponse("Invalid submission date format."));
+    } catch (Exception e) {
+        logger.error("Error retrieving feedback", e);
+        return ResponseEntity.internalServerError().body(new ErrorResponse("Error retrieving feedback."));
+    }
+}
+
+
+//     @GetMapping("/feedback")
+// public ResponseEntity<?> getFeedback(
+//         @RequestParam String userId,
+//         @RequestParam(required = false) String submissionDate) {
+//     try {
+//         Date parsedDate = null;
+//         if (submissionDate != null && !submissionDate.isEmpty()) {
+//             // Parse the date string into a Date object
+//             SimpleDateFormat formatter = new SimpleDateFormat("dd MMMM yyyy");
+//             parsedDate = formatter.parse(submissionDate);
+//         }
+
+//         List<Summary> feedbackList = summaryRepository.getFeedback(userId, parsedDate);
+
+//         if (feedbackList.isEmpty()) {
+//             return ResponseEntity.noContent().build();
+//         }
+//         return ResponseEntity.ok(feedbackList);
+//     } catch (ParseException e) {
+//         return ResponseEntity.badRequest().body(new ErrorResponse("Invalid submission date format. Expected format: 'dd MMMM yyyy'"));
+//     } catch (Exception e) {
+//         logger.error("Error retrieving feedback", e);
+//         return ResponseEntity.internalServerError()
+//                 .body(new ErrorResponse("Error retrieving feedback: " + e.getMessage()));
+//     }
+// }
 
 
 

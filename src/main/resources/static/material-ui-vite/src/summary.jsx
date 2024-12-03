@@ -11,6 +11,7 @@ import {
 import MicIcon from "@mui/icons-material/Mic";
 import MicOffIcon from "@mui/icons-material/MicOff";
 import { useNavigate, useParams } from "react-router-dom";
+
 import TopBar from "./Components/TopBar";
 import BottomNavBar from "./Components/BottomNavBar";
 import { useUser } from "./Hooks/UseUser";
@@ -93,7 +94,6 @@ const SummaryComponent = () => {
 
     const handleSpeechToggle = () => {
         const recognition = recognitionRef.current;
-
         if (!recognition) {
             setError("Speech recognition not supported in this browser.");
             return;

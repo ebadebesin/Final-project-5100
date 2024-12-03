@@ -1,6 +1,7 @@
 package edu.neu.mgen.finalproject5100.repository;
 
 import edu.neu.mgen.finalproject5100.model.Summary;
+import edu.neu.mgen.finalproject5100.util.DateUtil;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 import java.util.Date;
@@ -121,19 +122,23 @@ public class SummaryRepository {
     }
 
 
-
     //remember to add id param to check for id and date
 
     public List<Summary> getFeedback(String userId, Date submissionDate) {
         try {
             Firestore firestore = FirestoreClient.getFirestore();
             CollectionReference collection = firestore.collection(COLLECTION_NAME);
-    
+
             Query query = collection.whereEqualTo("userId", userId);
             if (submissionDate != null) {
-                query = query.whereEqualTo("submissionDate", submissionDate);
+
+                Date start_date = DateUtil.getStartOfDate(submissionDate);
+                Date end_date = DateUtil.getEndOfDate(submissionDate);
+                query = query.whereGreaterThanOrEqualTo("submissionDate", start_date)
+                        .whereLessThanOrEqualTo("submissionDate", end_date);
+                //query = query.whereEqualTo("submissionDate", submissionDate);
             }
-    
+
             ApiFuture<QuerySnapshot> querySnapshot = query.get();
             List<Summary> feedbackList = new ArrayList<>();
             for (QueryDocumentSnapshot document : querySnapshot.get().getDocuments()) {
@@ -144,10 +149,6 @@ public class SummaryRepository {
             throw new RuntimeException("Error retrieving feedback", e);
         }
     }
-
-
-
-
 
 
     public Summary findBestScoreByArticleId(String articleId, String userId) {

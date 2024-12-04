@@ -11,7 +11,7 @@ import { Button, Container, Rating } from "@mui/material";
 import { useSummaryHistory } from "./Hooks/UseSummaryHistory";
 import { useNavigate } from "react-router-dom";
 
-function HistoryItem({ cover, title, date, rate, id }) {
+function HistoryItem({ cover, title, date, rate, feedback, userSummary, id }) {
     const navigate = useNavigate();
     return (
         <ListItem
@@ -31,7 +31,22 @@ function HistoryItem({ cover, title, date, rate, id }) {
             <ListItemText
                 primary={title}
                 secondary={
-                    <>
+                    <>  
+                        <Typography
+                            variant="body2"
+                            color="text.primary"
+                            gutterBottom
+                        >
+                            Summary: {userSummary || "No summary provided"}
+                        </Typography>
+                        <Typography
+                            variant="body2"
+                            color="text.secondary"
+                            gutterBottom
+                        >
+                            Feedback: {feedback || "No feedback yet"}
+                        </Typography>
+
                         <Rating
                             name="half-rating-read"
                             defaultValue={rate}
@@ -97,6 +112,7 @@ export default function SummaryHistory() {
                         width: "100%",
                         bgcolor: "background.paper",
                     }}
+                    
                 >
                     {data.pages.map((group, i) => (
                         <React.Fragment key={i}>
@@ -108,6 +124,8 @@ export default function SummaryHistory() {
                                         title={article?.title}
                                         date={article?.date.substring(0, 10)}
                                         rate={summary?.score / 2}
+                                        feedback={summary?.feedback}
+                                        userSummary={summary?.userSummary}
                                         id={summary?.id}
                                     />
                                     <Divider component="li" />

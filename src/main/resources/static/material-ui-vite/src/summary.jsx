@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import {
     Box,
     Paper,
@@ -8,7 +8,10 @@ import {
     Snackbar,
     Alert,
 } from "@mui/material";
+import MicIcon from "@mui/icons-material/Mic";
+import MicOffIcon from "@mui/icons-material/MicOff";
 import { useNavigate, useParams } from "react-router-dom";
+
 import TopBar from "./Components/TopBar";
 import BottomNavBar from "./Components/BottomNavBar";
 import { useUser } from "./Hooks/UseUser";
@@ -17,26 +20,113 @@ const SummaryComponent = () => {
     const [summary, setSummary] = useState("");
     const [error, setError] = useState(null);
     const [loading, setLoading] = useState(false);
+    const [isListening, setIsListening] = useState(false);
     const navigate = useNavigate();
     const { articleId } = useParams(); // Access article ID from URL
-    const { id: userId } = useUser(); // Retrieve user ID
+    // const { id: userId } = useUser(); // Retrieve user ID
+    const recognitionRef = useRef(null); // Store recognition instance
 
+    let recognition; // SpeechRecognition instance
+
+    // Initialize SpeechRecognition
+    useEffect(() => {
+        const SpeechRecognition =
+            window.SpeechRecognition || window.webkitSpeechRecognition;
+
+        if (SpeechRecognition) {
+            recognition = new SpeechRecognition();
+            recognition.continuous = true;
+            recognition.interimResults = true;
+            recognition.lang = "en-US";
+
+            const cleanTranscript = (transcript) => {
+                // Remove duplicate words
+                return transcript
+                    .split(" ")
+                    .filter((word, index, arr) => word !== arr[index - 1])
+                    .join(" ");
+            };
+
+            recognition.onresult = (event) => {
+                let finalTranscript = "";
+            
+                for (const result of event.results) {
+                    if (result.isFinal) {
+                        finalTranscript += result[0].transcript + " ";
+                    }
+                }
+            
+                // Optionally clean the text
+                const cleanedText = cleanTranscript(finalTranscript.trim());
+                setSummary(cleanedText);
+            };
+
+            // // Capture recognized speech
+            // recognition.onresult = (event) => {
+            //     const transcript = Array.from(event.results)
+            //         .map((result) => result[0].transcript)
+            //         .join("");
+
+            //     setSummary((prev) => `${prev} ${transcript}`); // Append to the summary
+            // };
+
+            // Handle errors
+            recognition.onerror = (event) => {
+                console.error("Speech recognition error:", event.error);
+                setError("Error with speech recognition. Try again.");
+                setIsListening(false);
+            };
+
+            recognition.onend = () => {
+                setIsListening(false); // Reset listening state when recognition stops
+            };
+            recognitionRef.current = recognition; // Store instance in ref
+        } else {
+            console.warn("Speech recognition not supported in this browser.");
+        }
+
+        return () => {
+            if (recognitionRef.current) {
+                recognitionRef.current.abort(); // Cleanup
+            }
+        };
+    }, []);
+
+    const handleSpeechToggle = () => {
+        const recognition = recognitionRef.current;
+        if (!recognition) {
+            setError("Speech recognition not supported in this browser.");
+            return;
+        }
+
+        if (isListening) {
+            recognition.stop();
+        } else {
+            recognition.start();
+        }
+        setIsListening(!isListening);
+    };
+
+    const { id: userId } = useUser(); // Retrieve user ID
     const handleSubmit = async () => {
         setLoading(true);
         setError(null);
 
         try {
-            const response = await fetch("/api/summaries/evaluate", {
-                method: "POST",
-                headers: {
-                    "Content-Type": "application/json",
-                    userId: userId, // Include userId in headers
-                },
-                body: JSON.stringify({
-                    articleId,
-                    userSummary: summary,
-                }),
-            });
+            const response = await fetch(
+                "http://localhost:8080/api/summaries/evaluate",
+                {
+                    method: "POST",
+                    headers: {
+                        "Content-Type": "application/json",
+                        userId: userId, // Include userId in headers
+                    },
+                    body: JSON.stringify({
+                        articleId,
+                        userSummary: summary,
+                    }),
+                }
+            );
 
             if (!response.ok) {
                 const errorData = await response.json();
@@ -69,7 +159,7 @@ const SummaryComponent = () => {
     };
     return (
         <Box sx={{ maxWidth: 800, margin: "auto", padding: 3 }}>
-            <TopBar title="Summarize"></TopBar>
+            <TopBar title="Summarize" />
             <Paper elevation={3} sx={{ padding: 3 }}>
                 <Typography variant="h5" gutterBottom>
                     Write Your Summary
@@ -83,7 +173,7 @@ const SummaryComponent = () => {
                     placeholder="Enter your summary here..."
                     sx={{ marginBottom: 2 }}
                 />
-                <Box sx={{ display: "flex", gap: 2 }}>
+                <Box sx={{ display: "flex", gap: 2, alignItems: "center" }}>
                     <Button
                         variant="contained"
                         onClick={handleSubmit}
@@ -93,6 +183,23 @@ const SummaryComponent = () => {
                     </Button>
                     <Button variant="outlined" onClick={handleTryLater}>
                         Try Later
+                    </Button>
+                    <Button
+                        variant="outlined"
+                        onClick={handleSpeechToggle}
+                        color={isListening ? "secondary" : "primary"}
+                    >
+                        {isListening ? (
+                            <>
+                                <MicOffIcon sx={{ marginRight: 1 }} />
+                                Stop Listening
+                            </>
+                        ) : (
+                            <>
+                                <MicIcon sx={{ marginRight: 1 }} />
+                                Start Listening
+                            </>
+                        )}
                     </Button>
                 </Box>
             </Paper>
@@ -111,6 +218,122 @@ const SummaryComponent = () => {
 };
 
 export default SummaryComponent;
+
+
+
+// import React, { useState } from "react";
+// import {
+//     Box,
+//     Paper,
+//     Typography,
+//     TextField,
+//     Button,
+//     Snackbar,
+//     Alert,
+// } from "@mui/material";
+// import { useNavigate, useParams } from "react-router-dom";
+// import TopBar from "./Components/TopBar";
+// import BottomNavBar from "./Components/BottomNavBar";
+// import { useUser } from "./Hooks/UseUser";
+
+// const SummaryComponent = () => {
+//     const [summary, setSummary] = useState("");
+//     const [error, setError] = useState(null);
+//     const [loading, setLoading] = useState(false);
+//     const navigate = useNavigate();
+//     const { articleId } = useParams(); // Access article ID from URL
+//     const { id: userId } = useUser(); // Retrieve user ID
+
+//     const handleSubmit = async () => {
+//         setLoading(true);
+//         setError(null);
+
+//         try {
+//             const response = await fetch("/api/summaries/evaluate", {
+//                 method: "POST",
+//                 headers: {
+//                     "Content-Type": "application/json",
+//                     userId: userId, // Include userId in headers
+//                 },
+//                 body: JSON.stringify({
+//                     articleId,
+//                     userSummary: summary,
+//                 }),
+//             });
+
+//             if (!response.ok) {
+//                 const errorData = await response.json();
+//                 throw new Error(
+//                     errorData.message || "Failed to evaluate summary"
+//                 );
+//             }
+
+//             const result = await response.json();
+//             if (result && result.score != null && result.feedback) {
+//                 navigate(`/feedback/${articleId}`, {
+//                     state: { feedback: result },
+//                 });
+//             } else {
+//                 throw new Error("Unexpected response structure from backend.");
+//             }
+//         } catch (error) {
+//             console.error("Error submitting summary:", error);
+//             setError(
+//                 error.message ||
+//                     "An error occurred while evaluating your summary"
+//             );
+//         } finally {
+//             setLoading(false);
+//         }
+//     };
+
+//     const handleTryLater = () => {
+//         navigate("/today"); // Navigate to the desired page (e.g., "Today" page or home)
+//     };
+//     return (
+//         <Box sx={{ maxWidth: 800, margin: "auto", padding: 3 }}>
+//             <TopBar title="Summarize"></TopBar>
+//             <Paper elevation={3} sx={{ padding: 3 }}>
+//                 <Typography variant="h5" gutterBottom>
+//                     Write Your Summary
+//                 </Typography>
+//                 <TextField
+//                     fullWidth
+//                     multiline
+//                     rows={4}
+//                     value={summary}
+//                     onChange={(e) => setSummary(e.target.value)}
+//                     placeholder="Enter your summary here..."
+//                     sx={{ marginBottom: 2 }}
+//                 />
+//                 <Box sx={{ display: "flex", gap: 2 }}>
+//                     <Button
+//                         variant="contained"
+//                         onClick={handleSubmit}
+//                         disabled={loading || !summary.trim()}
+//                     >
+//                         {loading ? "Submitting..." : "Submit Summary"}
+//                     </Button>
+//                     <Button variant="outlined" onClick={handleTryLater}>
+//                         Try Later
+//                     </Button>
+//                 </Box>
+//             </Paper>
+//             <Snackbar
+//                 open={!!error}
+//                 autoHideDuration={6000}
+//                 onClose={() => setError(null)}
+//             >
+//                 <Alert onClose={() => setError(null)} severity="error">
+//                     {error}
+//                 </Alert>
+//             </Snackbar>
+//             {/* <BottomNavBar /> */}
+//         </Box>
+//     );
+// };
+
+// export default SummaryComponent;
 
 // import React, { useState, useEffect } from 'react';
 // import {

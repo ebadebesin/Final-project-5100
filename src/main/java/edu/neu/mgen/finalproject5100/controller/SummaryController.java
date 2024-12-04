@@ -13,11 +13,13 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.slf4j.Logger;
 
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.time.LocalDate;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
-
+import java.util.stream.Collectors;
 // import java.time.LocalDateTime;
 import java.util.List;
 
@@ -25,15 +27,15 @@ import java.util.List;
 @RequestMapping("/api/summaries")
 @CrossOrigin(origins = "http://localhost:5173")
 public class SummaryController {
-    
+
     private static final Logger logger = LoggerFactory.getLogger(SummaryController.class);
-    
+
     @Autowired
     private OpenAIService openAIService;
-    
-     @Autowired
-     private SummaryRepository summaryRepository;
-    
+
+    @Autowired
+    private SummaryRepository summaryRepository;
+
     // @PostMapping("/evaluate")
     // public ResponseEntity<?> evaluateSummary(@RequestBody Summary summary) {
     //     try {
@@ -86,27 +88,87 @@ public class SummaryController {
             return ResponseEntity.ok(response);
         } catch (Exception e) {
             return ResponseEntity.internalServerError()
-                .body(new ErrorResponse("Error retrieving submission counts: " + e.getMessage()));
+                    .body(new ErrorResponse("Error retrieving submission counts: " + e.getMessage()));
         }
     }
 
     @GetMapping("/submissions")
     public ResponseEntity<?> getSubmissions(
-        @RequestParam String userId,
-        @RequestParam int page) {
+            @RequestParam String userId,
+            @RequestParam int page) {
         try {
             int pageSize = 50;
             List<Summary> submissions = summaryRepository.getSubmissions(userId, page, pageSize);
             return ResponseEntity.ok(submissions);
         } catch (Exception e) {
             return ResponseEntity.internalServerError()
-                .body(new ErrorResponse("Error retrieving submissions: " + e.getMessage()));
+                    .body(new ErrorResponse("Error retrieving submissions: " + e.getMessage()));
+        }
+    }
+
+    @GetMapping("/feedback")
+    public ResponseEntity<?> getFeedback(
+            @RequestParam String userId,
+            @RequestParam(required = false) String articleId,
+            @RequestParam(required = false) String submissionDate) {
+        try {
+            System.out.println(submissionDate);
+
+            Date parsedDate = null;
+            if (submissionDate != null && !submissionDate.isEmpty()) {
+                SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd");
+                parsedDate = formatter.parse(submissionDate);
+                System.out.println(parsedDate);
+            }
+
+            List<Summary> feedbackList = summaryRepository.getFeedback(userId, parsedDate);
+
+            if (articleId != null) {
+                feedbackList = feedbackList.stream()
+                        .filter(feedback -> articleId.equals(feedback.getArticleId()))
+                        .collect(Collectors.toList());
+            }
+//
+//            if (feedbackList.isEmpty()) {
+//                return ResponseEntity.noContent().build();
+//            }
+
+            return ResponseEntity.ok(feedbackList);
+        } catch (ParseException e) {
+            return ResponseEntity.badRequest().body(new ErrorResponse("Invalid submission date format."));
+        } catch (Exception e) {
+            logger.error("Error retrieving feedback", e);
+            return ResponseEntity.internalServerError().body(new ErrorResponse("Error retrieving feedback."));
         }
     }
 
 
+//     @GetMapping("/feedback")
+// public ResponseEntity<?> getFeedback(
+//         @RequestParam String userId,
+//         @RequestParam(required = false) String submissionDate) {
+//     try {
+//         Date parsedDate = null;
+//         if (submissionDate != null && !submissionDate.isEmpty()) {
+//             // Parse the date string into a Date object
+//             SimpleDateFormat formatter = new SimpleDateFormat("dd MMMM yyyy");
+//             parsedDate = formatter.parse(submissionDate);
+//         }
 
+//         List<Summary> feedbackList = summaryRepository.getFeedback(userId, parsedDate);
 
+//         if (feedbackList.isEmpty()) {
+//             return ResponseEntity.noContent().build();
+//         }
+//         return ResponseEntity.ok(feedbackList);
+//     } catch (ParseException e) {
+//         return ResponseEntity.badRequest().body(new ErrorResponse("Invalid submission date format. Expected format: 'dd MMMM yyyy'"));
+//     } catch (Exception e) {
+//         logger.error("Error retrieving feedback", e);
+//         return ResponseEntity.internalServerError()
+//                 .body(new ErrorResponse("Error retrieving feedback: " + e.getMessage()));
+//     }
+// }
 
 
     // @GetMapping("/test")

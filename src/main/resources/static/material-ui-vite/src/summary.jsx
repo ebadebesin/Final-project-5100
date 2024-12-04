@@ -57,8 +57,9 @@ const SummaryComponent = () => {
                 }
             
                 // Optionally clean the text
-                const cleanedText = cleanTranscript(finalTranscript.trim());
-                setSummary(cleanedText);
+                // const cleanedText = cleanTranscript(finalTranscript.trim());
+                 setSummary((cleanedText) => `${cleanedText} ${finalTranscript.trim()}`);
+                //setSummary((prev) => `${prev} ${finalTranscript.trim()}`);
             };
 
             // // Capture recognized speech

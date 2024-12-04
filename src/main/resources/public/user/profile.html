@@ -1,272 +1,256 @@
 <!DOCTYPE html>
 <html lang="en">
+    <head>
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <title>Interactive Calendar with Month Selection</title>
+        <link rel="stylesheet" href="./profile.css" />
 
-<head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Interactive Calendar with Month Selection</title>
-    <link rel="stylesheet" href="./profile.css" />
-    <!-- <script type="module" src="./profile.js" defer></script> -->
+        <link href="https://cdn.muicss.com/mui-0.10.3/css/mui.min.css" rel="stylesheet" type="text/css" />
+        <script src="https://cdn.muicss.com/mui-0.10.3/js/mui.min.js"></script>
+        <!-- <script type="module" src="./profile.js" defer></script> -->
 
-    <style>
-        /* Modal styles */
-        
-        .modal {
-            display: none;
-            position: fixed;
-            z-index: 1;
-            left: 0;
-            top: 0;
-            width: 100%;
-            height: 100%;
-            background-color: rgba(0, 0, 0, 0.5);
-        }
-        
-        .modal-content {
-            background-color: #fefefe;
-            margin: 15% auto;
-            padding: 20px;
-            border: 1px solid #888;
-            width: 80%;
-            max-width: 500px;
-            text-align: center;
-        }
-        
-        .close {
-            color: #aaa;
-            float: right;
-            font-size: 28px;
-            font-weight: bold;
-            cursor: pointer;
-        }
-        
-        .close:hover,
-        .close:focus {
-            color: black;
-            text-decoration: none;
-            cursor: pointer;
-        }
-    </style>
-</head>
+        <style>
+            /* Modal styles */
 
-<body>
-    <div class="profile">
-        <h2>Profile</h2>
-    </div>
+            .modal {
+                display: none;
+                position: fixed;
+                z-index: 1;
+                left: 0;
+                top: 0;
+                width: 100%;
+                height: 100%;
+                background-color: rgba(0, 0, 0, 0.5);
+            }
 
-    <hr style="
+            .modal-content {
+                background-color: #fefefe;
+                margin: 15% auto;
+                padding: 20px;
+                border: 1px solid #888;
+                width: 80%;
+                max-width: 500px;
+                text-align: center;
+            }
+
+            .close {
+                color: #aaa;
+                float: right;
+                font-size: 28px;
+                font-weight: bold;
+                cursor: pointer;
+            }
+
+            .close:hover,
+            .close:focus {
+                color: black;
+                text-decoration: none;
+                cursor: pointer;
+            }
+        </style>
+    </head>
+
+    <body>
+        <div class="profile">
+            <h2>Profile</h2>
+        </div>
+
+        <hr
+            style="
                 width: 100%;
                 height: 1px;
                 background-color: rgb(158, 158, 158);
                 border: none;
-            " />
+            "
+        />
 
-    <div>
-        <img src="./img/a001d59555f7036fa0f3a9436784a6d8.jpg" class="image" />
-    </div>
-    <br /><br />
-    <div>
-        <span class="names">HUSKY</span>
-    </div>
-    <br /><br />
-    <div>
-        <span class="progress">Your Progress</span>
-        <span class="number">number</span>
-    </div>
-    <br />
-    <div class="calendar">
-        <div class="calendar-header">
-            <button onclick="changeMonth(-1)">&#8249;</button>
-            <span id="month-year"></span>
-            <button onclick="changeMonth(1)">&#8250;</button>
+        <div>
+            <img
+                src="./avatar.jpg"
+                class="image"
+            />
         </div>
-        <table>
-            <thead>
-                <tr>
-                    <th>SUN</th>
-                    <th>MON</th>
-                    <th>TUE</th>
-                    <th>WED</th>
-                    <th>THU</th>
-                    <th>FRI</th>
-                    <th>SAT</th>
-                </tr>
-            </thead>
-            <tbody id="calendar-body"></tbody>
-        </table>
-    </div>
+        <div>
+            <span class="names">HUSKY</span>
+        </div>
+        <br />
+        <div class="calendar">
+            <div class="calendar-header">
+                <button class="mui-btn mui-btn--small mui-btn--primary" onclick="changeMonth(-1)">&#8249;</button>
+                <span id="month-year"></span>
+                <button class="mui-btn mui-btn--small mui-btn--primary" onclick="changeMonth(1)">&#8250;</button>
+            </div>
+            <table>
+                <thead>
+                    <tr>
+                        <th>SUN</th>
+                        <th>MON</th>
+                        <th>TUE</th>
+                        <th>WED</th>
+                        <th>THU</th>
+                        <th>FRI</th>
+                        <th>SAT</th>
+                    </tr>
+                </thead>
+                <tbody id="calendar-body"></tbody>
+            </table>
+        </div>
 
-    <div class="selected-date" id="selected-date"></div>
+        <div class="selected-date" id="selected-date"></div>
 
-    <div class="button">
-        <button id="logout-button">Logout</button>
-    </div>
-
-    <!-- Modal for history information -->
-    <div id="history-modal" class="modal">
-        <div class="modal-content">
-            <span class="close" onclick="closeModal()">&times;</span>
-            <h2>History Information</h2>
-            <div id="history-details">
-                Select a date to view history information.
+        <!-- Modal for history information -->
+        <div id="history-modal" class="modal">
+            <div class="modal-content">
+                <span class="close" onclick="closeModal()">&times;</span>
+                <h2>History Information</h2>
+                <div id="history-details">
+                    Select a date to view history information.
+                </div>
             </div>
         </div>
-    </div>
 
-    <script>
-        const selectedDateDisplay =
-            document.getElementById("selected-date");
-        const monthYearDisplay = document.getElementById("month-year");
-        const calendarBody = document.getElementById("calendar-body");
+        <script>
+            const selectedDateDisplay =
+                document.getElementById("selected-date");
+            const monthYearDisplay = document.getElementById("month-year");
+            const calendarBody = document.getElementById("calendar-body");
 
-        let currentYear = new Date().getFullYear();
-        let currentMonth = new Date().getMonth();
+            let currentYear = new Date().getFullYear();
+            let currentMonth = new Date().getMonth();
 
-        // 今天的日期
-        const today = new Date();
-        const todayYear = today.getFullYear();
-        const todayMonth = today.getMonth();
-        const todayDate = today.getDate();
+            // 今天的日期
+            const today = new Date();
+            const todayYear = today.getFullYear();
+            const todayMonth = today.getMonth();
+            const todayDate = today.getDate();
 
-        // 更新日历显示
-        function renderCalendar() {
-            calendarBody.innerHTML = ""; // 清空日历表格
-            const firstDay = new Date(
-                currentYear,
-                currentMonth,
-                1
-            ).getDay(); // 当前月份的第一天是星期几
-            const daysInMonth = new Date(
-                currentYear,
-                currentMonth + 1,
-                0
-            ).getDate(); // 当前月份的天数
+            // 更新日历显示
+            function renderCalendar() {
+                calendarBody.innerHTML = ""; // 清空日历表格
+                const firstDay = new Date(
+                    currentYear,
+                    currentMonth,
+                    1
+                ).getDay(); // 当前月份的第一天是星期几
+                const daysInMonth = new Date(
+                    currentYear,
+                    currentMonth + 1,
+                    0
+                ).getDate(); // 当前月份的天数
 
-            monthYearDisplay.textContent = `${new Date(
+                monthYearDisplay.textContent = `${new Date(
                     currentYear,
                     currentMonth
                 ).toLocaleString("default", { month: "long" })} ${currentYear}`;
 
-            let date = 1;
-            for (let i = 0; i < 6; i++) {
-                // 最多6行
-                const row = document.createElement("tr");
+                let date = 1;
+                for (let i = 0; i < 6; i++) {
+                    // 最多6行
+                    const row = document.createElement("tr");
 
-                for (let j = 0; j < 7; j++) {
-                    const cell = document.createElement("td");
-                    if (i === 0 && j < firstDay) {
-                        cell.textContent = "";
-                    } else if (date > daysInMonth) {
-                        cell.textContent = "";
-                    } else {
-                        cell.textContent = date;
+                    for (let j = 0; j < 7; j++) {
+                        const cell = document.createElement("td");
+                        if (i === 0 && j < firstDay) {
+                            cell.textContent = "";
+                        } else if (date > daysInMonth) {
+                            cell.textContent = "";
+                        } else {
+                            cell.textContent = date;
 
-                        if (
-                            currentYear === todayYear &&
-                            currentMonth === todayMonth &&
-                            date === todayDate
-                        ) {
-                            cell.classList.add("selected");
+                            if (
+                                currentYear === todayYear &&
+                                currentMonth === todayMonth &&
+                                date === todayDate
+                            ) {
+                                cell.classList.add("selected");
+                            }
+
+                            cell.addEventListener("click", function () {
+                                selectDate(cell);
+                            });
+                            date++;
                         }
-
-                        cell.addEventListener("click", function() {
-                            selectDate(cell);
-                        });
-                        date++;
+                        row.appendChild(cell);
                     }
-                    row.appendChild(cell);
+                    calendarBody.appendChild(row);
                 }
-                calendarBody.appendChild(row);
             }
-        }
 
-        function selectDate(cell) {
-            document
-                .querySelectorAll(".calendar td")
-                .forEach((c) => c.classList.remove("selected"));
-            if (cell.textContent) {
-                cell.classList.add("selected");
-                showHistoryModal(cell.textContent);
+            function selectDate(cell) {
+                document
+                    .querySelectorAll(".calendar td")
+                    .forEach((c) => c.classList.remove("selected"));
+                if (cell.textContent) {
+                    cell.classList.add("selected");
+                    showHistoryModal(cell.textContent);
+                }
             }
-        }
 
-        // Function to show the modal with history information
-        function showHistoryModal(date) {
-            const historyModal = document.getElementById("history-modal");
-            const historyDetails =
-                document.getElementById("history-details");
-            const monthYear = monthYearDisplay.textContent;
+            // Function to show the modal with history information
+            function showHistoryModal(date) {
+                const historyModal = document.getElementById("history-modal");
+                const historyDetails =
+                    document.getElementById("history-details");
+                const monthYear = monthYearDisplay.textContent;
 
-            // Display the selected date and mock history information
-            historyDetails.textContent = `History information for ${monthYear} ${date}`;
-            historyModal.style.display = "block";
-        }
-
-        // Function to close the modal
-        function closeModal() {
-            document.getElementById("history-modal").style.display = "none";
-        }
-
-        // Close the modal if the user clicks outside of it
-        window.onclick = function(event) {
-            const modal = document.getElementById("history-modal");
-            if (event.target == modal) {
-                modal.style.display = "none";
+                // Display the selected date and mock history information
+                historyDetails.textContent = `History information for ${monthYear} ${date}`;
+                historyModal.style.display = "block";
             }
-        };
 
-        function changeMonth(step) {
-            currentMonth += step;
-            if (currentMonth < 0) {
-                currentMonth = 11;
-                currentYear--;
-            } else if (currentMonth > 11) {
-                currentMonth = 0;
-                currentYear++;
+            // Function to close the modal
+            function closeModal() {
+                document.getElementById("history-modal").style.display = "none";
             }
+
+            // Close the modal if the user clicks outside of it
+            window.onclick = function (event) {
+                const modal = document.getElementById("history-modal");
+                if (event.target == modal) {
+                    modal.style.display = "none";
+                }
+            };
+
+            function changeMonth(step) {
+                currentMonth += step;
+                if (currentMonth < 0) {
+                    currentMonth = 11;
+                    currentYear--;
+                } else if (currentMonth > 11) {
+                    currentMonth = 0;
+                    currentYear++;
+                }
+                renderCalendar();
+            }
+
             renderCalendar();
-        }
 
-        renderCalendar();
+            function getCookieValue(cookieName) {
+                // Find the cookie using a regular expression
+                const cookieMatch = document.cookie.match(
+                    `(?:^|; )${cookieName}=([^;]*)`
+                );
+                return cookieMatch ? decodeURIComponent(cookieMatch[1]) : null; // Decode the value and return it
+            }
 
-        function getCookieValue(cookieName) {
-            // Find the cookie using a regular expression
-            const cookieMatch = document.cookie.match(
-                `(?:^|; )${cookieName}=([^;]*)`
-            );
-            return cookieMatch ? decodeURIComponent(cookieMatch[1]) : null; // Decode the value and return it
-        }
+            // Example usage:
+            document.addEventListener("DOMContentLoaded", () => {
+                const username = getCookieValue("username");
+                const email = getCookieValue("email");
 
-        // Example usage:
-        document.addEventListener("DOMContentLoaded", () => {
-            const username = getCookieValue("username");
-            const email = getCookieValue("email");
+                console.log("Username from cookie:", username);
+                console.log("Email from cookie:", email);
 
-            console.log("Username from cookie:", username);
-            console.log("Email from cookie:", email);
-
-            const usernameSpan = document.querySelector(".names");
-            usernameSpan.textContent = username || "Guest"; // Set username or default to "Guest"
-
-        });
-
-        document.getElementById("logout-button").addEventListener("click", () => {
-            // Clear all cookies
-            document.cookie.split(";").forEach((cookie) => {
-                const name = cookie.split("=")[0].trim();
-                document.cookie = `${name}=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;`;
+                const usernameSpan = document.querySelector(".names");
+                usernameSpan.textContent = username || "Guest"; // Set username or default to "Guest"
             });
+        </script>
 
-            // Optionally clear local storage or session storage
-            localStorage.clear();
-            sessionStorage.clear();
-
-            // // Redirect to the login page or home page
-            window.location.href = "http://localhost:8080/user/signin.html";
-        });
-    </script>
-
-    <script src="https://cdn.jsdelivr.net/npm/@iframe-resizer/child" type="text/javascript" async></script>
-</body>
-
+        <script
+            src="https://cdn.jsdelivr.net/npm/@iframe-resizer/child"
+            type="text/javascript"
+            async
+        ></script>
+    </body>
 </html>

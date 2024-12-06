@@ -18,7 +18,7 @@ function getCookie(cname) {
 export const useUser = () => {
     const navigate = useNavigate();
     let username = getCookie("username");
-    console.log("username", username);
+    //console.log("username", username);
     if (!username) {
         navigate("/signin");
         //window.location.href = "/user/signin";

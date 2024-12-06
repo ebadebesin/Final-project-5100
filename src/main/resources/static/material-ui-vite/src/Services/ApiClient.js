@@ -1,7 +1,7 @@
 const BASE_URL = "/api";
 const DEV_URL = "http://localhost:8080/api";
 //const DEV_URL = "/data";
-import { useParams } from "react-router-dom";
+// import { useParams } from "react-router-dom";
 
 export default class ApiClient {
     endpoint;

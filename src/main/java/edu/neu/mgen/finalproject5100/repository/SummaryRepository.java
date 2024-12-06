@@ -4,6 +4,7 @@ import edu.neu.mgen.finalproject5100.model.Summary;
 import edu.neu.mgen.finalproject5100.util.DateUtil;
 
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.repository.query.Param;
 
 import java.util.Date;
 import java.util.Optional;
@@ -19,6 +20,7 @@ import org.springframework.stereotype.Repository;
 import java.time.LocalDate;
 import java.time.ZoneId;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 import java.util.concurrent.ExecutionException;
@@ -147,6 +149,54 @@ public class SummaryRepository {
             throw new RuntimeException("Error retrieving feedback", e);
         }
     }
+
+    public List<String> getFeedbackDates(String userId, Date submissionDate) {
+        try {
+            Firestore firestore = FirestoreClient.getFirestore();
+            CollectionReference collection = firestore.collection(COLLECTION_NAME);
+    
+            Query query = collection.whereEqualTo("userId", userId);
+    
+            if (submissionDate != null) {
+                // Get the start and end of the day for the submissionDate
+                Date start_date = DateUtil.getStartOfDate(submissionDate);
+                Date end_date = DateUtil.getEndOfDate(submissionDate);
+    
+                query = query.whereGreaterThanOrEqualTo("submissionDate", start_date)
+                             .whereLessThanOrEqualTo("submissionDate", end_date);
+            }
+    
+            ApiFuture<QuerySnapshot> querySnapshot = query.get();
+            List<String> feedbackDates = new ArrayList<>();
+    
+            // Process each document in the query result
+            for (QueryDocumentSnapshot document : querySnapshot.get().getDocuments()) {
+                Summary summary = document.toObject(Summary.class);
+                Date feedbackDate = summary.getSubmissionDate();  // Assuming your Summary class has submissionDate field
+    
+                // Extract the year, month, and day from the feedbackDate
+                Calendar calendar = Calendar.getInstance();
+                calendar.setTime(feedbackDate);
+                int year = calendar.get(Calendar.YEAR);
+                int month = calendar.get(Calendar.MONTH) + 1; // Adjust for 0-based month
+                int dayOfMonth = calendar.get(Calendar.DAY_OF_MONTH);
+    
+                // Format the date as "YYYY-MM-DD"
+                String formattedDate = String.format("%d-%02d-%02d", year, month, dayOfMonth);
+                
+                // Add the formatted date to the list if it's not already there
+                if (!feedbackDates.contains(formattedDate)) {
+                    feedbackDates.add(formattedDate);
+                }
+            }
+    
+            return feedbackDates;
+        } catch (InterruptedException | ExecutionException e) {
+            throw new RuntimeException("Error retrieving feedback dates", e);
+        }
+    }
+    
+
 
 
     public Summary findBestScoreByArticleId(String articleId, String userId) {

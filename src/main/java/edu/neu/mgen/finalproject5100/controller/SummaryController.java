@@ -23,6 +23,7 @@ import java.util.stream.Collectors;
 // import java.time.LocalDateTime;
 import java.util.List;
 
+
 @RestController
 @RequestMapping("/api/summaries")
 @CrossOrigin(origins = "http://localhost:5173")
@@ -141,6 +142,31 @@ public class SummaryController {
             return ResponseEntity.internalServerError().body(new ErrorResponse("Error retrieving feedback."));
         }
     }
+
+    @GetMapping("/feedbackDates")
+    public ResponseEntity<?> getFeedbackDates(
+            @RequestParam String userId,
+            @RequestParam(required = false) String submissionDate) {
+
+        try {
+            Date parsedDate = null;
+            if (submissionDate != null && !submissionDate.isEmpty()) {
+                SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd");
+                parsedDate = formatter.parse(submissionDate);
+            }
+
+            List<String> feedbackDates = summaryRepository.getFeedbackDates(userId, parsedDate);
+            return ResponseEntity.ok(feedbackDates);
+            
+        } catch (ParseException e) {
+            return ResponseEntity.badRequest().body(new ErrorResponse("Invalid submission date format."));
+        } catch (Exception e) {
+            logger.error("Error retrieving feedback dates", e);
+            return ResponseEntity.internalServerError().body(new ErrorResponse("Error retrieving feedback dates."));
+        }
+    }
+
+    
 
 
 //     @GetMapping("/feedback")

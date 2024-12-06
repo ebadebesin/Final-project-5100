@@ -2,6 +2,7 @@ package edu.neu.mgen.finalproject5100.repository;
 
 import edu.neu.mgen.finalproject5100.model.Summary;
 import edu.neu.mgen.finalproject5100.util.DateUtil;
+
 import org.springframework.data.jpa.repository.JpaRepository;
 
 import java.util.Date;
@@ -121,10 +122,7 @@ public class SummaryRepository {
         }
     }
 
-
-    //remember to add id param to check for id and date
-
-    public List<Summary> getFeedback(String userId, Date submissionDate) {
+      public List<Summary> getFeedback(String userId, Date submissionDate) {
         try {
             Firestore firestore = FirestoreClient.getFirestore();
             CollectionReference collection = firestore.collection(COLLECTION_NAME);

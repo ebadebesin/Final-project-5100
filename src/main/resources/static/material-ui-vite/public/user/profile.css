@@ -31,6 +31,17 @@ body {
     margin: 10px 0px 40px;
     /* Space around the line */
 }
+.has-feedback {
+    background-color: #ffcccb; /* Light red background to indicate feedback */
+    border-radius: 50%;
+    font-weight: bold;
+}
+
+.selected {
+    background-color: #4caf50; /* Example: green for today's date */
+    color: white;
+}
+
 
 .calendar {
     width: auto;

@@ -9,7 +9,7 @@ import { Link } from "react-router-dom";
 import { useScores } from "./Hooks/UseScores";
 
 function TextWithLineBreaks(props) {
-    console.log("TextWithLineBreaks", props);
+    //console.log("TextWithLineBreaks", props);
     if (!props.children) {
         return <></>;
     }

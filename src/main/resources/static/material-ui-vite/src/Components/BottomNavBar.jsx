@@ -12,7 +12,7 @@ export default function BottomNavBar({ currentPath }) {
     currentPath = currentPath || location.pathname.toLowerCase();
 
     currentPath = currentPath.replace(/^\//, "");
-    console.log("currentPath:", currentPath);
+    //console.log("currentPath:", currentPath);
     const map = {
         today: 0,
         history: 1,

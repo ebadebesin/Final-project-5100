@@ -14,12 +14,7 @@ import { useNavigate } from "react-router-dom";
 function HistoryItem({ cover, title, date, rate, feedback, userSummary, id }) {
     const navigate = useNavigate();
     return (
-        <ListItem
-            alignItems="flex-start"
-            onClick={() => {
-                navigate(`/feedback/${id}`);
-            }}
-        >
+        <ListItem alignItems="flex-start">
             <ListItemAvatar>
                 <Avatar
                     alt="Remy Sharp"
@@ -31,7 +26,7 @@ function HistoryItem({ cover, title, date, rate, feedback, userSummary, id }) {
             <ListItemText
                 primary={title}
                 secondary={
-                    <>  
+                    <>
                         <Typography
                             variant="body2"
                             color="text.primary"
@@ -112,7 +107,6 @@ export default function SummaryHistory() {
                         width: "100%",
                         bgcolor: "background.paper",
                     }}
-                    
                 >
                     {data.pages.map((group, i) => (
                         <React.Fragment key={i}>

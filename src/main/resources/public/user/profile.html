@@ -6,9 +6,13 @@
         <title>Interactive Calendar with Month Selection</title>
         <link rel="stylesheet" href="./profile.css" />
         <!-- import ApiClient.js -->
-         <!-- <script src=" /Users/ebunadebesin/Desktop/finalproject5100/src/main/resources/static/material-ui-vite/src/Services/ApiClient.js"></script> -->
+        <!-- <script src=" /Users/ebunadebesin/Desktop/finalproject5100/src/main/resources/static/material-ui-vite/src/Services/ApiClient.js"></script> -->
 
-        <link href="https://cdn.muicss.com/mui-0.10.3/css/mui.min.css" rel="stylesheet" type="text/css" />
+        <link
+            href="https://cdn.muicss.com/mui-0.10.3/css/mui.min.css"
+            rel="stylesheet"
+            type="text/css"
+        />
         <script src="https://cdn.muicss.com/mui-0.10.3/js/mui.min.js"></script>
         <!-- <script type="module" src="./profile.js" defer></script> -->
 
@@ -50,8 +54,6 @@
                 text-decoration: none;
                 cursor: pointer;
             }
-
-
         </style>
     </head>
 
@@ -70,10 +72,7 @@
         />
 
         <div>
-            <img
-                src="./avatar.jpg"
-                class="image"
-            />
+            <img src="./avatar.jpg" class="image" />
         </div>
         <div>
             <span class="names">HUSKY</span>
@@ -81,9 +80,19 @@
         <br />
         <div class="calendar">
             <div class="calendar-header">
-                <button class="mui-btn mui-btn--small mui-btn--primary" onclick="changeMonth(-1)">&#8249;</button>
+                <button
+                    class="mui-btn mui-btn--small mui-btn--primary"
+                    onclick="changeMonth(-1)"
+                >
+                    &#8249;
+                </button>
                 <span id="month-year"></span>
-                <button class="mui-btn mui-btn--small mui-btn--primary" onclick="changeMonth(1)">&#8250;</button>
+                <button
+                    class="mui-btn mui-btn--small mui-btn--primary"
+                    onclick="changeMonth(1)"
+                >
+                    &#8250;
+                </button>
             </div>
             <table>
                 <thead>
@@ -114,6 +123,15 @@
             </div>
         </div>
 
+        <div>
+            <button
+                id="logoutButton"
+                class="mui-btn mui-btn--small mui-btn--danger"
+            >
+                Logout
+            </button>
+        </div>
+
         <script>
             const selectedDateDisplay =
                 document.getElementById("selected-date");
@@ -128,7 +146,6 @@
             const todayYear = today.getFullYear();
             const todayMonth = today.getMonth();
             const todayDate = today.getDate();
-
 
             // async function fetchFeedbackDates() {
             //     try {
@@ -149,7 +166,7 @@
             //         .map(dateString => new Date(dateString))
             //         .filter(date => date.getFullYear() === currentYear && date.getMonth() === currentMonth)
             //         .map(date => date.getDate());
-                    
+
             //     } catch (error) {
             //         console.error("Error fetching feedback dates:", error);
             //         return []; // Return an empty array if there's an error
@@ -160,7 +177,7 @@
                 try {
                     const userId = getCookieValue("username"); // Ensure this cookie exists
                     const response = await fetch(
-                        `http://localhost:8080/api/summaries/feedbackDates?userId=${userId}`
+                        `/api/summaries/feedbackDates?userId=${userId}`
                     );
 
                     if (!response.ok) {
@@ -171,18 +188,18 @@
 
                     // Convert strings to Date objects and filter for the current month
                     const feedbackDates = feedbackList
-                        .map(dateString => {
+                        .map((dateString) => {
                             // Force the date to midnight to avoid timezone issues
                             const date = new Date(dateString + "T00:00:00");
                             // console.log(`Parsed date: ${date.toISOString()} from ${dateString}`); // Debugging the parsed date
                             return date;
                         })
                         .filter(
-                            date =>
+                            (date) =>
                                 date.getFullYear() === currentYear && // Match the year
-                                date.getMonth() === currentMonth      // Match the month
+                                date.getMonth() === currentMonth // Match the month
                         )
-                        .map(date => date.getDate()); // Extract the day of the month
+                        .map((date) => date.getDate()); // Extract the day of the month
 
                     // console.log("Filtered feedback dates:", feedbackDates); // Log the filtered dates
                     return feedbackDates;
@@ -192,20 +209,28 @@
                 }
             }
 
-
-
             async function renderCalendar() {
                 calendarBody.innerHTML = ""; // Clear the calendar body
-                const firstDay = new Date(currentYear, currentMonth, 1).getDay(); // First day of the month
-                const daysInMonth = new Date(currentYear, currentMonth + 1, 0).getDate(); // Total days in the current month
+                const firstDay = new Date(
+                    currentYear,
+                    currentMonth,
+                    1
+                ).getDay(); // First day of the month
+                const daysInMonth = new Date(
+                    currentYear,
+                    currentMonth + 1,
+                    0
+                ).getDate(); // Total days in the current month
 
                 // Update the month and year display
-                monthYearDisplay.textContent = `${new Date(currentYear, currentMonth).toLocaleString("default", { month: "long" })} ${currentYear}`;
+                monthYearDisplay.textContent = `${new Date(
+                    currentYear,
+                    currentMonth
+                ).toLocaleString("default", { month: "long" })} ${currentYear}`;
 
                 // Fetch feedback dates for the current month
                 const feedbackDates = await fetchFeedbackDates();
                 console.log("Feedback Dates:", feedbackDates);
-
 
                 let date = 1;
                 for (let i = 0; i < 6; i++) {
@@ -226,7 +251,11 @@
                             cell.textContent = date;
 
                             // Highlight today's date
-                            if (currentYear === todayYear && currentMonth === todayMonth && date === todayDate) {
+                            if (
+                                currentYear === todayYear &&
+                                currentMonth === todayMonth &&
+                                date === todayDate
+                            ) {
                                 cell.classList.add("selected");
                             }
 
@@ -235,7 +264,6 @@
                                 cell.classList.add("has-feedback");
                                 cell.title = "Feedback available";
                             }
-
 
                             // Add event listener to each date cell to allow for date selection
                             cell.addEventListener("click", function () {
@@ -252,7 +280,6 @@
                 }
             }
 
-
             function selectDate(cell) {
                 document
                     .querySelectorAll(".calendar td")
@@ -266,11 +293,14 @@
             // Function to show the modal with feedback history information
             async function showHistoryModal(date) {
                 const historyModal = document.getElementById("history-modal");
-                const historyDetails = document.getElementById("history-details");
+                const historyDetails =
+                    document.getElementById("history-details");
                 const monthYear = monthYearDisplay.textContent;
 
                 // Format the selected date for API query
-                const submissionDate = `${currentYear}-${String(currentMonth + 1).padStart(2, "0")}-${String(date).padStart(2, "0")}`;
+                const submissionDate = `${currentYear}-${String(
+                    currentMonth + 1
+                ).padStart(2, "0")}-${String(date).padStart(2, "0")}`;
                 // console.log("Formatted submissionDate:", submissionDate);
 
                 // Display loading state in the modal
@@ -281,7 +311,7 @@
                     // Fetch feedback from the backend
                     const userId = getCookieValue("username"); // Ensure this cookie exists
                     const response = await fetch(
-                        `http://localhost:8080/api/summaries/feedback?userId=${userId}&submissionDate=${submissionDate}`
+                        `/api/summaries/feedback?userId=${userId}&submissionDate=${submissionDate}`
                     );
                     //console.log(`Fetch URL: http://localhost:8080/api/summaries/feedback?userId=${userId}&submissionDate=${submissionDate}`);
                     if (!response.ok) {
@@ -299,9 +329,16 @@
                                     .map(
                                         (feedback) => `
                                         <li>
-                                            <strong>Your Summary:</strong> ${feedback.userSummary || "N/A"}<br />
-                                            <strong>Score:</strong> ${feedback.score || "N/A"}<br />
-                                            <strong>Your Feedback:</strong> ${feedback.feedback || "No comments"}
+                                            <strong>Your Summary:</strong> ${
+                                                feedback.userSummary || "N/A"
+                                            }<br />
+                                            <strong>Score:</strong> ${
+                                                feedback.score || "N/A"
+                                            }<br />
+                                            <strong>Your Feedback:</strong> ${
+                                                feedback.feedback ||
+                                                "No comments"
+                                            }
                                         </li>
                                     `
                                     )
@@ -313,10 +350,10 @@
                     }
                 } catch (error) {
                     console.error("Error fetching feedback:", error);
-                    historyDetails.textContent = "An error occurred while fetching feedback.";
+                    historyDetails.textContent =
+                        "An error occurred while fetching feedback.";
                 }
             }
-
 
             // Function to close the modal
             function closeModal() {
@@ -364,6 +401,26 @@
                 const usernameSpan = document.querySelector(".names");
                 usernameSpan.textContent = username || "Guest"; // Set username or default to "Guest"
             });
+
+            document
+                .getElementById("logoutButton")
+                .addEventListener("click", function () {
+                    // Remove cookies
+                    document.cookie =
+                        "username=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;";
+                    document.cookie =
+                        "email=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;";
+
+                    // Reset the username on the page
+                    const usernameSpan = document.querySelector(".names");
+                    usernameSpan.textContent = "Guest"; // Set to default value
+
+                    // Optionally redirect to the login page (if you have one)
+                    window.location.href = "/signin.html"; // Uncomment this if you want to redirect
+
+                    // Show a message or alert for successful logout
+                    alert("You have been logged out.");
+                });
         </script>
 
         <script

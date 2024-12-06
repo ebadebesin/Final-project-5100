@@ -79,7 +79,7 @@
         </div>
         <br />
         <div class="calendar">
-            <div class="calendar-header">
+            <div class="calendar-`header">
                 <button
                     class="mui-btn mui-btn--small mui-btn--primary"
                     onclick="changeMonth(-1)"
@@ -323,28 +323,27 @@
                     // Populate modal with feedback data
                     if (feedbackList.length > 0) {
                         historyDetails.innerHTML = `
-                            <h3>Feedback for ${monthYear} ${date}</h3>
-                            <ul>
-                                ${feedbackList
-                                    .map(
-                                        (feedback) => `
-                                        <li>
-                                            <strong>Your Summary:</strong> ${
-                                                feedback.userSummary || "N/A"
-                                            }<br />
-                                            <strong>Score:</strong> ${
-                                                feedback.score || "N/A"
-                                            }<br />
-                                            <strong>Your Feedback:</strong> ${
-                                                feedback.feedback ||
-                                                "No comments"
-                                            }
-                                        </li>
-                                    `
-                                    )
-                                    .join("")}
-                            </ul>
-                        `;
+                    <h3>Feedback for ${monthYear} ${date}</h3>
+                    <ul>
+                        ${feedbackList
+                            .map(
+                                (feedback) => `
+                                <li>
+                                    <strong>Your Summary:</strong> ${
+                                        feedback.userSummary || "N/A"
+                                    }<br />
+                                    <strong>Score:</strong> ${
+                                        feedback.score || "N/A"
+                                    }<br />
+                                    <strong>Your Feedback:</strong> ${
+                                        feedback.feedback || "No comments"
+                                    }
+                                </li>
+                            `
+                            )
+                            .join("")}
+                    </ul>
+                `;
                     } else {
                         historyDetails.textContent = `No feedback found for ${monthYear} ${date}.`;
                     }
@@ -416,7 +415,7 @@
                     usernameSpan.textContent = "Guest"; // Set to default value
 
                     // Optionally redirect to the login page (if you have one)
-                    window.location.href = "/signin.html"; // Uncomment this if you want to redirect
+                    window.location.href = "./signin.html"; // Uncomment this if you want to redirect
 
                     // Show a message or alert for successful logout
                     alert("You have been logged out.");

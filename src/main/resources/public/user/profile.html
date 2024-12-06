@@ -5,6 +5,8 @@
         <meta name="viewport" content="width=device-width, initial-scale=1.0" />
         <title>Interactive Calendar with Month Selection</title>
         <link rel="stylesheet" href="./profile.css" />
+        <!-- import ApiClient.js -->
+         <!-- <script src=" /Users/ebunadebesin/Desktop/finalproject5100/src/main/resources/static/material-ui-vite/src/Services/ApiClient.js"></script> -->
 
         <link href="https://cdn.muicss.com/mui-0.10.3/css/mui.min.css" rel="stylesheet" type="text/css" />
         <script src="https://cdn.muicss.com/mui-0.10.3/js/mui.min.js"></script>
@@ -48,6 +50,8 @@
                 text-decoration: none;
                 cursor: pointer;
             }
+
+
         </style>
     </head>
 
@@ -125,57 +129,129 @@
             const todayMonth = today.getMonth();
             const todayDate = today.getDate();
 
-            // 更新日历显示
-            function renderCalendar() {
-                calendarBody.innerHTML = ""; // 清空日历表格
-                const firstDay = new Date(
-                    currentYear,
-                    currentMonth,
-                    1
-                ).getDay(); // 当前月份的第一天是星期几
-                const daysInMonth = new Date(
-                    currentYear,
-                    currentMonth + 1,
-                    0
-                ).getDate(); // 当前月份的天数
 
-                monthYearDisplay.textContent = `${new Date(
-                    currentYear,
-                    currentMonth
-                ).toLocaleString("default", { month: "long" })} ${currentYear}`;
+            // async function fetchFeedbackDates() {
+            //     try {
+            //         const userId = getCookieValue("username"); // Ensure this cookie exists
+
+            //         // Call the backend API with the proper parameters
+            //         const response = await fetch(
+            //             `http://localhost:8080/api/summaries/feedbackDates?userId=${userId}`
+            //         );
+
+            //         if (!response.ok) {
+            //             throw new Error("Failed to fetch feedback dates");
+            //         }
+
+            //         // Assuming the backend returns a list of feedback objects, we only need the dates for the feedback
+            //         const feedbackList = await response.json(); // This will return the full feedback list
+            //         return feedbackList
+            //         .map(dateString => new Date(dateString))
+            //         .filter(date => date.getFullYear() === currentYear && date.getMonth() === currentMonth)
+            //         .map(date => date.getDate());
+                    
+            //     } catch (error) {
+            //         console.error("Error fetching feedback dates:", error);
+            //         return []; // Return an empty array if there's an error
+            //     }
+            // }
+
+            async function fetchFeedbackDates() {
+                try {
+                    const userId = getCookieValue("username"); // Ensure this cookie exists
+                    const response = await fetch(
+                        `http://localhost:8080/api/summaries/feedbackDates?userId=${userId}`
+                    );
+
+                    if (!response.ok) {
+                        throw new Error("Failed to fetch feedback dates");
+                    }
+
+                    const feedbackList = await response.json(); // This will return the full feedback list
+
+                    // Convert strings to Date objects and filter for the current month
+                    const feedbackDates = feedbackList
+                        .map(dateString => {
+                            // Force the date to midnight to avoid timezone issues
+                            const date = new Date(dateString + "T00:00:00");
+                            // console.log(`Parsed date: ${date.toISOString()} from ${dateString}`); // Debugging the parsed date
+                            return date;
+                        })
+                        .filter(
+                            date =>
+                                date.getFullYear() === currentYear && // Match the year
+                                date.getMonth() === currentMonth      // Match the month
+                        )
+                        .map(date => date.getDate()); // Extract the day of the month
+
+                    // console.log("Filtered feedback dates:", feedbackDates); // Log the filtered dates
+                    return feedbackDates;
+                } catch (error) {
+                    console.error("Error fetching feedback dates:", error);
+                    return []; // Return an empty array if there's an error
+                }
+            }
+
+
+
+            async function renderCalendar() {
+                calendarBody.innerHTML = ""; // Clear the calendar body
+                const firstDay = new Date(currentYear, currentMonth, 1).getDay(); // First day of the month
+                const daysInMonth = new Date(currentYear, currentMonth + 1, 0).getDate(); // Total days in the current month
+
+                // Update the month and year display
+                monthYearDisplay.textContent = `${new Date(currentYear, currentMonth).toLocaleString("default", { month: "long" })} ${currentYear}`;
+
+                // Fetch feedback dates for the current month
+                const feedbackDates = await fetchFeedbackDates();
+                console.log("Feedback Dates:", feedbackDates);
+
 
                 let date = 1;
                 for (let i = 0; i < 6; i++) {
-                    // 最多6行
+                    // Maximum of 6 rows in the calendar (weeks)
                     const row = document.createElement("tr");
 
                     for (let j = 0; j < 7; j++) {
                         const cell = document.createElement("td");
+
+                        // If it's before the first day of the month, leave the cell empty
                         if (i === 0 && j < firstDay) {
                             cell.textContent = "";
                         } else if (date > daysInMonth) {
+                            // If the date exceeds the number of days in the month, leave the cell empty
                             cell.textContent = "";
                         } else {
+                            // Display the day number
                             cell.textContent = date;
 
-                            if (
-                                currentYear === todayYear &&
-                                currentMonth === todayMonth &&
-                                date === todayDate
-                            ) {
+                            // Highlight today's date
+                            if (currentYear === todayYear && currentMonth === todayMonth && date === todayDate) {
                                 cell.classList.add("selected");
                             }
 
+                            // Highlight dates that have feedback
+                            if (feedbackDates.includes(date)) {
+                                cell.classList.add("has-feedback");
+                                cell.title = "Feedback available";
+                            }
+
+
+                            // Add event listener to each date cell to allow for date selection
                             cell.addEventListener("click", function () {
                                 selectDate(cell);
                             });
+
+                            // Move to the next date
                             date++;
                         }
+
                         row.appendChild(cell);
                     }
                     calendarBody.appendChild(row);
                 }
             }
+
 
             function selectDate(cell) {
                 document
@@ -187,17 +263,60 @@
                 }
             }
 
-            // Function to show the modal with history information
-            function showHistoryModal(date) {
+            // Function to show the modal with feedback history information
+            async function showHistoryModal(date) {
                 const historyModal = document.getElementById("history-modal");
-                const historyDetails =
-                    document.getElementById("history-details");
+                const historyDetails = document.getElementById("history-details");
                 const monthYear = monthYearDisplay.textContent;
 
-                // Display the selected date and mock history information
-                historyDetails.textContent = `History information for ${monthYear} ${date}`;
+                // Format the selected date for API query
+                const submissionDate = `${currentYear}-${String(currentMonth + 1).padStart(2, "0")}-${String(date).padStart(2, "0")}`;
+                // console.log("Formatted submissionDate:", submissionDate);
+
+                // Display loading state in the modal
+                historyDetails.textContent = "Loading feedback...";
                 historyModal.style.display = "block";
+
+                try {
+                    // Fetch feedback from the backend
+                    const userId = getCookieValue("username"); // Ensure this cookie exists
+                    const response = await fetch(
+                        `http://localhost:8080/api/summaries/feedback?userId=${userId}&submissionDate=${submissionDate}`
+                    );
+                    //console.log(`Fetch URL: http://localhost:8080/api/summaries/feedback?userId=${userId}&submissionDate=${submissionDate}`);
+                    if (!response.ok) {
+                        throw new Error("Failed to fetch feedback");
+                    }
+
+                    const feedbackList = await response.json();
+
+                    // Populate modal with feedback data
+                    if (feedbackList.length > 0) {
+                        historyDetails.innerHTML = `
+                            <h3>Feedback for ${monthYear} ${date}</h3>
+                            <ul>
+                                ${feedbackList
+                                    .map(
+                                        (feedback) => `
+                                        <li>
+                                            <strong>Your Summary:</strong> ${feedback.userSummary || "N/A"}<br />
+                                            <strong>Score:</strong> ${feedback.score || "N/A"}<br />
+                                            <strong>Your Feedback:</strong> ${feedback.feedback || "No comments"}
+                                        </li>
+                                    `
+                                    )
+                                    .join("")}
+                            </ul>
+                        `;
+                    } else {
+                        historyDetails.textContent = `No feedback found for ${monthYear} ${date}.`;
+                    }
+                } catch (error) {
+                    console.error("Error fetching feedback:", error);
+                    historyDetails.textContent = "An error occurred while fetching feedback.";
+                }
             }
+
 
             // Function to close the modal
             function closeModal() {
@@ -240,7 +359,7 @@
                 const email = getCookieValue("email");
 
                 console.log("Username from cookie:", username);
-                console.log("Email from cookie:", email);
+                //console.log("Email from cookie:", email);
 
                 const usernameSpan = document.querySelector(".names");
                 usernameSpan.textContent = username || "Guest"; // Set username or default to "Guest"

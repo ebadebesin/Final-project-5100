@@ -32,6 +32,14 @@ body {
     /* Space around the line */
 }
 
+
+
+.selected {
+    background-color: #4caf50; /* Example: green for today's date */
+    color: white;
+}
+
+
 .calendar {
     width: auto;
     border: 1px solid #ddd;
@@ -44,6 +52,14 @@ body {
     justify-content: space-between;
     font-weight: bold;
     margin-bottom: 20px;
+}
+
+
+.has-feedback {
+    background-color: #81faa5; /* Light yellow */
+    border-radius: 50%; /* Make it look like a marker */
+    font-weight: bold;
+    cursor: pointer; /* Indicate interactivity */
 }
 
 .calendar table {

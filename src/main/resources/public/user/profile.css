@@ -107,13 +107,56 @@ hr {
     margin-bottom: 40px;
 }
 
-.modal-content {
+/* .modal-content {
     margin-top: 100px;
     position: fixed;
-    text-align: center;
+    text-align: justify;
     top: 20%;
-    /* 距离窗口顶部 50% */
+    /* 距离窗口顶部 50% 
     left: 50%;
-    /* 距离窗口左侧 50% */
+    /* 距离窗口左侧 50% 
     transform: translate(-50%, -50%);
+    overflow: auto;
+    z-index: 1000; /* Ensure it stays on top 
+    
+} */
+
+/* Modal container styling */
+.modal {
+    display: none; /* Initially hidden */
+    position: fixed;
+    z-index: 1000; /* Ensure it's on top */
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    overflow: auto; /* Allow modal content to scroll if it exceeds viewport height */
+    background-color: rgba(0, 0, 0, 0.5); /* Semi-transparent background */
+}
+
+/* Modal content box styling */
+.modal-content {
+    background-color: #fff;
+    margin: 10% auto; /* Center vertically and horizontally */
+    padding: 20px;
+    border-radius: 5px;
+    width: 80%;
+    max-width: 600px; /* Optional: Limit the maximum width */
+    max-height: 70vh; /* Restrict height to 70% of the viewport */
+    overflow-y: auto; /* Enable vertical scrolling inside the modal */
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+}
+
+/* Close button styling */
+.close {
+    float: right;
+    font-size: 24px;
+    font-weight: bold;
+    cursor: pointer;
+    color: #333;
+}
+
+/* Optional: Add hover effect for close button */
+.close:hover {
+    color: #f00;
 }

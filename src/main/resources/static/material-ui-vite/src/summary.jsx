@@ -39,45 +39,45 @@ const SummaryComponent = () => {
             recognition.interimResults = true;
             recognition.lang = "en-US";
 
-           
-
             let debounceTimeout;
             recognition.onresult = (event) => {
                 clearTimeout(debounceTimeout);
                 let finalTranscript = "";
-            
+
                 for (let i = event.resultIndex; i < event.results.length; i++) {
                     const result = event.results[i];
                     if (result.isFinal) {
                         finalTranscript += result[0].transcript + " ";
                     }
                 }
-            
+
                 // Add punctuation only if there is non-empty content
                 const punctuate = (text) => {
                     if (!text.trim()) {
                         return ""; // Return empty if there's no meaningful input
                     }
-            
+
                     const words = text.trim().split(" ");
-            
+
                     // Capitalize the first word of the sentence
-                    words[0] = words[0].charAt(0).toUpperCase() + words[0].slice(1);
-            
+                    words[0] =
+                        words[0].charAt(0).toUpperCase() + words[0].slice(1);
+
                     let punctuatedText = words.join(" ");
-            
+
                     // Add a period if the sentence doesn't end with punctuation
                     if (!/[.?!]$/.test(punctuatedText)) {
                         punctuatedText += ".";
                     }
-            
+
                     return punctuatedText;
                 };
-            
+
                 debounceTimeout = setTimeout(() => {
                     setSummary((prev) => {
-                        const punctuatedText = punctuate(finalTranscript).trim();
-            
+                        const punctuatedText =
+                            punctuate(finalTranscript).trim();
+
                         // Avoid adding multiple periods due to pauses
                         if (punctuatedText) {
                             return `${prev} ${punctuatedText}`.trim();
@@ -86,8 +86,6 @@ const SummaryComponent = () => {
                     });
                 }, 300); // Update every 300ms
             };
-            
-            
 
             // recognition.onresult = (event) => {
             //     clearTimeout(debounceTimeout);
@@ -104,8 +102,6 @@ const SummaryComponent = () => {
             //         setSummary((prev) => `${prev} ${finalTranscript.trim()}`);
             //     }, 300); // Update every 300ms
             // };
-
-            
 
             // Handle errors
             recognition.onerror = (event) => {
@@ -150,20 +146,17 @@ const SummaryComponent = () => {
         setError(null);
 
         try {
-            const response = await fetch(
-                "http://localhost:8080/api/summaries/evaluate",
-                {
-                    method: "POST",
-                    headers: {
-                        "Content-Type": "application/json",
-                        userId: userId, // Include userId in headers
-                    },
-                    body: JSON.stringify({
-                        articleId,
-                        userSummary: summary,
-                    }),
-                }
-            );
+            const response = await fetch("/api/summaries/evaluate", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                    userId: userId, // Include userId in headers
+                },
+                body: JSON.stringify({
+                    articleId,
+                    userSummary: summary,
+                }),
+            });
 
             if (!response.ok) {
                 const errorData = await response.json();

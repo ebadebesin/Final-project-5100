@@ -35,13 +35,6 @@ public class ArticleController {
         return ResponseEntity.ok(article);
     }
 
-    @GetMapping("/test")
-    public ResponseEntity<?> getArticle() {
-        updateNews();
-        Article article = articleRepo.findLatest();
-        return ResponseEntity.ok(article);
-    }
-
     //todo: migrate this to schedule tasks
     private Article updateNews() {
         //check if we already have news

@@ -17,7 +17,7 @@
         <!-- <script type="module" src="./profile.js" defer></script> -->
 
         <style>
-            /* Modal styles */
+            /* Modalstyles */
 
             .modal {
                 display: none;
@@ -389,7 +389,7 @@
                 return cookieMatch ? decodeURIComponent(cookieMatch[1]) : null; // Decode the value and return it
             }
 
-            // Example usage:
+            // Example usage for adding username from API:
             document.addEventListener("DOMContentLoaded", () => {
                 const username = getCookieValue("username");
                 const email = getCookieValue("email");
@@ -398,7 +398,7 @@
                 //console.log("Email from cookie:", email);
 
                 const usernameSpan = document.querySelector(".names");
-                usernameSpan.textContent = username || "Guest"; // Set username or default to "Guest"
+                usernameSpan.textContent = username || "Demo"; // Set username or default to "Demo"
             });
 
             document
@@ -412,7 +412,7 @@
 
                     // Reset the username on the page
                     const usernameSpan = document.querySelector(".names");
-                    usernameSpan.textContent = "Guest"; // Set to default value
+                    usernameSpan.textContent = "Demo"; // Set to default value
 
                     // Optionally redirect to the login page (if you have one)
                     window.location.href = "./signin.html"; // Uncomment this if you want to redirect
